@@ -1,5 +1,5 @@
 // =============================
-// VERIFICACIÓN DE CUENTA (OTP)
+// VERIFICACIÓN DE CUENTA (OTP por correo con Resend)
 // Cargar DESPUÉS de login.js (usa mostrarVista y mostrarToast)
 // =============================
 
@@ -13,13 +13,11 @@
 
     // ---- Configuración ----
 
-    // MODO_DEMO = true: el código se genera aquí y se muestra en una
-    // notificación simulada. Al conectar el backend, ponlo en false y
-    // reemplaza enviarCodigoAlServidor() y validarCodigoEnServidor().
-    const MODO_DEMO = true;
+    // En producción cambia esta URL por la de tu servidor desplegado
+    const API = "http://localhost:3000";
 
     const LONGITUD = 4;
-    const SEGUNDOS_REENVIO = 30;
+    const SEGUNDOS_REENVIO = 62; // el servidor exige 60 s entre códigos
 
     // ---- Elementos ----
 
@@ -38,19 +36,21 @@
     const botonReenviar = document.getElementById("ver-btn-reenviar");
     const botonCambiar = document.getElementById("ver-cambiar");
 
+    // Caja de SMS simulado: ya no se usa, se oculta
     const cajaSms = document.getElementById("ver-sms");
-    const smsOrigen = document.getElementById("ver-sms-origen");
-    const smsTexto = document.getElementById("ver-sms-texto");
-    const smsRellenar = document.getElementById("ver-sms-rellenar");
+
+    if (cajaSms) {
+        cajaSms.hidden = true;
+        cajaSms.style.display = "none";
+    }
 
     // ---- Estado ----
 
     let datos = { email: "", telefono: "", codigoPais: "" };
     let metodo = "email";
-    let codigoGenerado = "";
     let intervalo = null;
-    let timeoutSms = null;
     let ocupado = false;
+    let enviando = false;
 
     const reducirMovimiento =
         window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -103,20 +103,60 @@
 
     }
 
-    // ---- API pública: la llama login.js al crear la cuenta ----
+    async function post(ruta, cuerpo) {
+
+        const r = await fetch(API + ruta, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(cuerpo)
+        });
+
+        return r.json();
+
+    }
+
+    function marcarCuentaVerificada(email) {
+
+        try {
+
+            const cuentas = JSON.parse(localStorage.getItem("tl_cuentas")) || [];
+
+            cuentas.forEach(function (c) {
+
+                if (c.email && c.email.toLowerCase() === email.toLowerCase()) {
+                    c.verificado = true;
+                }
+
+            });
+
+            localStorage.setItem("tl_cuentas", JSON.stringify(cuentas));
+
+        } catch (e) { }
+
+    }
+
+    // ---- API pública: la llama login.js ----
 
     window.abrirVerificacion = function (nuevosDatos) {
 
-        datos = nuevosDatos;
+        datos = {
+            email: ((nuevosDatos && nuevosDatos.email) || "").trim().toLowerCase(),
+            telefono: (nuevosDatos && nuevosDatos.telefono) || "",
+            codigoPais: (nuevosDatos && nuevosDatos.codigoPais) || ""
+        };
+
         metodo = "email";
 
         destinoEmail.textContent = enmascararEmail(datos.email);
-        destinoTelefono.textContent = enmascararTelefono(datos.codigoPais, datos.telefono);
+        destinoTelefono.textContent = datos.telefono
+            ? enmascararTelefono(datos.codigoPais, datos.telefono)
+            : "";
 
         elegirMetodo("email");
         reiniciarEscenario();
         detenerTemporizador();
-        cajaSms.classList.remove("visible");
+
+        botonEnviar.disabled = false;
 
         subtitulo.textContent = "Elige dónde quieres recibir tu código de verificación.";
 
@@ -145,14 +185,29 @@
     botonesMetodo.forEach(function (b) {
 
         b.addEventListener("click", function () {
+
             elegirMetodo(b.getAttribute("data-metodo"));
+
+            if (metodo === "telefono") {
+                mostrarToast("La verificación por SMS aún no está disponible. Usa el correo.");
+            }
+
         });
 
     });
 
-    botonEnviar.addEventListener("click", function () {
+    botonEnviar.addEventListener("click", async function () {
 
-        enviarCodigo();
+        if (metodo !== "email") {
+            mostrarToast("La verificación por SMS aún no está disponible. Usa el correo.");
+            return;
+        }
+
+        const ok = await enviarCodigo();
+
+        if (!ok) {
+            return;
+        }
 
         subtitulo.textContent =
             "Ingresa el código de " + LONGITUD + " dígitos que enviamos a " + destinoActual() + ".";
@@ -164,53 +219,59 @@
 
     });
 
-    // ---- Envío del código ----
+    // ---- Envío del código (servidor + Resend) ----
+    // Devuelve true si el correo se envió bien.
 
-    function enviarCodigo() {
+    async function enviarCodigo() {
 
-        // Genera un código de LONGITUD dígitos (solo para la demo).
-        codigoGenerado = "";
-
-        for (let i = 0; i < LONGITUD; i++) {
-            codigoGenerado += Math.floor(Math.random() * 10);
+        if (enviando) {
+            return false;
         }
 
-        // TODO backend: enviar el código real por el canal elegido
-        // (metodo === "email" o "telefono") y NO generarlo en el cliente.
-        // enviarCodigoAlServidor(metodo, datos);
+        enviando = true;
+        botonEnviar.disabled = true;
+        botonReenviar.disabled = true;
 
-        mostrarToast(
-            (metodo === "email" ? "Código enviado a tu correo: " : "Código enviado por SMS a: ") +
-            destinoActual()
-        );
+        try {
 
-        iniciarTemporizador();
+            const data = await post("/api/enviar-codigo", { email: datos.email });
 
-        // Notificación simulada, como en el video de referencia.
-        clearTimeout(timeoutSms);
-        cajaSms.classList.remove("visible");
+            if (!data.ok) {
 
-        if (MODO_DEMO) {
+                mostrarToast(data.mensaje || "No se pudo enviar el código.");
+                ponerEstado(data.mensaje || "No se pudo enviar el código.", "error");
 
-            timeoutSms = setTimeout(function () {
+                botonEnviar.disabled = false;
+                botonReenviar.disabled = false;
+                enviando = false;
 
-                smsOrigen.textContent =
-                    "DEMO · " + (metodo === "email" ? "Correo" : "SMS") + " · TrueLock";
-                smsTexto.textContent = codigoGenerado + " es tu código de verificación.";
+                return false;
 
-                cajaSms.classList.add("visible");
+            }
 
-            }, 1200);
+            mostrarToast("Código enviado a tu correo: " + enmascararEmail(datos.email));
+
+            iniciarTemporizador();
+
+            botonEnviar.disabled = false;
+            enviando = false;
+
+            return true;
+
+        } catch (e) {
+
+            mostrarToast("No se pudo conectar con el servidor. ¿Está encendido?");
+            ponerEstado("No se pudo conectar con el servidor.", "error");
+
+            botonEnviar.disabled = false;
+            botonReenviar.disabled = false;
+            enviando = false;
+
+            return false;
 
         }
 
     }
-
-    smsRellenar.addEventListener("click", function () {
-
-        rellenar(codigoGenerado);
-
-    });
 
     // ---- Temporizador de reenvío ----
 
@@ -253,20 +314,21 @@
 
     }
 
-    botonReenviar.addEventListener("click", function () {
+    botonReenviar.addEventListener("click", async function () {
 
         reiniciarEscenario();
-        enviarCodigo();
 
-        slots[0].focus();
+        const ok = await enviarCodigo();
+
+        if (ok) {
+            slots[0].focus();
+        }
 
     });
 
     botonCambiar.addEventListener("click", function () {
 
         detenerTemporizador();
-        clearTimeout(timeoutSms);
-        cajaSms.classList.remove("visible");
         reiniciarEscenario();
 
         subtitulo.textContent = "Elige dónde quieres recibir tu código de verificación.";
@@ -386,9 +448,9 @@
 
     });
 
-    // ---- Verificación ----
+    // ---- Verificación (la valida el servidor) ----
 
-    function revisar() {
+    async function revisar() {
 
         if (ocupado || leerCodigo().length < LONGITUD) {
             return;
@@ -400,23 +462,40 @@
             s.disabled = true;
         });
 
-        // TODO backend: reemplazar esta comparación por la validación real
-        // (validarCodigoEnServidor(metodo, datos, leerCodigo())).
-        const correcto = leerCodigo() === codigoGenerado;
+        ponerEstado("Verificando...");
 
-        if (correcto) {
-            exito();
-        } else {
-            fallo();
+        try {
+
+            const data = await post("/api/verificar-codigo", {
+                email: datos.email,
+                codigo: leerCodigo()
+            });
+
+            if (data.ok) {
+                exito();
+            } else {
+                fallo(data.mensaje);
+            }
+
+        } catch (e) {
+
+            ponerEstado("No se pudo conectar con el servidor.", "error");
+
+            slots.forEach(function (s) {
+                s.disabled = false;
+            });
+
+            ocupado = false;
+
         }
 
     }
 
-    function fallo() {
+    function fallo(mensaje) {
 
         stage.classList.add("error");
 
-        ponerEstado("El código no es correcto. Inténtalo de nuevo.", "error");
+        ponerEstado(mensaje || "El código no es correcto. Inténtalo de nuevo.", "error");
 
         setTimeout(function () {
 
@@ -440,9 +519,9 @@
 
     function exito() {
 
-        cajaSms.classList.remove("visible");
-
         detenerTemporizador();
+
+        marcarCuentaVerificada(datos.email);
 
         document.activeElement && document.activeElement.blur();
 

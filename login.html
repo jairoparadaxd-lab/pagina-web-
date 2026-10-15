@@ -382,7 +382,7 @@
                     <label for="registro-numero-documento">Número de Documento</label>
                     <input type="text" id="registro-numero-documento" name="numero_documento"
                         placeholder="Número de documento" required inputmode="numeric" autocomplete="off"
-                        maxlength="20">
+                        minlength="5" maxlength="20">
                     <p class="form-hint form-hint-neutral" id="documento-hint"></p>
                 </div>
 
@@ -625,6 +625,7 @@
     <!-- TOASTS -->
     <div class="toast" id="toast"></div>
 
+    <script src="JS/seguridad-entradas.js"></script>
     <script src="JS/login.js"></script>
     <script src="JS/fuerza-contraseña.js"></script>
     <script src="JS/verificacion.js"></script>

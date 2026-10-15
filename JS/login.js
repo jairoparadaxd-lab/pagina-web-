@@ -227,6 +227,23 @@ function guardarCuenta(cuenta) {
 
 }
 
+// NUEVO: borra una cuenta guardada (solo del localStorage, nunca las demo).
+// Se usa para reemplazar una cuenta que quedó sin verificar.
+
+function eliminarCuentaGuardada(email) {
+
+    const buscado = email.trim().toLowerCase();
+
+    const resto = leerCuentasGuardadas().filter(function (c) {
+        return c.email.toLowerCase() !== buscado;
+    });
+
+    try {
+        localStorage.setItem(CLAVE_CUENTAS, JSON.stringify(resto));
+    } catch (e) { }
+
+}
+
 function buscarCuenta(email) {
 
     const buscado = email.trim().toLowerCase();
@@ -735,6 +752,20 @@ if (formLogin) {
                     ? "Correo o contraseña incorrectos."
                     : "Teléfono o contraseña incorrectos."
             );
+
+            return;
+
+        }
+
+        // Cuenta creada pero sin verificar el correo: pedir el código
+
+        if (cuenta.verificado === false) {
+
+            mostrarToast("Primero debes verificar tu correo.");
+
+            if (typeof abrirVerificacion === "function") {
+                abrirVerificacion({ email: cuenta.email, telefono: "", codigoPais: "" });
+            }
 
             return;
 
@@ -1483,12 +1514,14 @@ function valorConOtro(idSelect) {
 // =============================
 // NÚMERO DE DOCUMENTO: LETRAS SOLO EN PASAPORTE / OTRO
 // Para CC, TI, CE y PPT solo se aceptan dígitos.
+// Longitud permitida: mínimo 5 y máximo 20.
 // =============================
 
 (function () {
 
     const tipo = document.getElementById("registro-tipo-documento");
     const num = document.getElementById("registro-numero-documento");
+    const hintDoc = document.getElementById("documento-hint");
 
     if (!tipo || !num) {
         return;
@@ -1507,6 +1540,10 @@ function valorConOtro(idSelect) {
         num.setAttribute("inputmode", alfa ? "text" : "numeric");
         num.value = num.value.replace(alfa ? /[^a-zA-Z0-9]/g : /\D/g, "").slice(0, 20);
 
+    }
+
+    if (hintDoc) {
+        hintDoc.textContent = "Entre 5 y 20 caracteres.";
     }
 
     tipo.addEventListener("change", limpiar);
@@ -1597,22 +1634,23 @@ function validarDocumento(tipo, numero, fechaNacimiento) {
 
     const num = numero.replace(/[\s.-]/g, "");
 
-    if (tipo === "pasaporte") {
+    // Para todos los tipos de documento: mínimo 5 y máximo 20
+    if (num.length < 5 || num.length > 20) {
+        return "El número de documento debe tener entre 5 y 20 caracteres.";
+    }
 
-        if (!/^[A-Za-z0-9]{6,9}$/.test(num)) {
-            return "El pasaporte debe tener entre 6 y 9 caracteres (letras y números).";
+    if (tipo === "pasaporte" || tipo === "otro") {
+
+        if (!/^[A-Za-z0-9]+$/.test(num)) {
+            return "El documento solo puede contener letras y números.";
         }
 
         if (/^(.)\1+$/.test(num)) {
-            return "Número de pasaporte inválido.";
+            return "Número de documento inválido.";
         }
 
         return "";
 
-    }
-
-    if (tipo === "otro") {
-        return num.length < 4 ? "Número de documento inválido." : "";
     }
 
     if (!/^\d+$/.test(num)) {
@@ -1621,19 +1659,6 @@ function validarDocumento(tipo, numero, fechaNacimiento) {
 
     if (num[0] === "0") {
         return "El número de documento no puede empezar por 0.";
-    }
-
-    const rangos = {
-        cc: [6, 10, "La cédula de ciudadanía debe tener entre 6 y 10 dígitos."],
-        ti: [10, 11, "La tarjeta de identidad debe tener 10 u 11 dígitos."],
-        ce: [6, 10, "La cédula de extranjería debe tener entre 6 y 10 dígitos."],
-        ppt: [6, 10, "El PPT debe tener entre 6 y 10 dígitos."]
-    };
-
-    const r = rangos[tipo];
-
-    if (r && (num.length < r[0] || num.length > r[1])) {
-        return r[2];
     }
 
     if (esNumeroFalso(num)) {
@@ -1814,7 +1839,12 @@ if (formRegistro) {
 
         }
 
-        if (buscarCuenta(email)) {
+        // CORREGIDO: una cuenta que quedó SIN VERIFICAR (por ejemplo, porque falló
+        // el envío del correo) no bloquea el registro: se reemplaza por la nueva.
+
+        const existente = buscarCuenta(email);
+
+        if (existente && existente.verificado !== false) {
 
             mostrarToast("Ya existe una cuenta con ese correo.");
 
@@ -1822,9 +1852,23 @@ if (formRegistro) {
 
         }
 
-        if (buscarCuentaPorUsuario(usuario)) {
+        const porUsuario = buscarCuentaPorUsuario(usuario);
+
+        if (porUsuario && porUsuario.email.toLowerCase() !== email.toLowerCase()) {
 
             mostrarToast("Ese nombre de usuario ya está en uso.");
+
+            return;
+
+        }
+
+        // NUEVO: el teléfono tampoco puede repetirse en otra cuenta
+
+        const porTelefono = buscarCuentaPorTelefono(codigoPais + telefono);
+
+        if (porTelefono && porTelefono.email.toLowerCase() !== email.toLowerCase()) {
+
+            mostrarToast("Ese número de teléfono ya está registrado.");
 
             return;
 
@@ -1844,11 +1888,16 @@ if (formRegistro) {
 
         }
 
+        // NUEVO: si había una cuenta sin verificar con este correo, se borra antes de guardar la nueva
+
+        eliminarCuentaGuardada(email);
+
         // Guardamos la cuenta (con su tipo/rol) para poder iniciar sesión después.
 
         guardarCuenta({
             email: email,
             password: password,
+            verificado: false,      // se pone en true al validar el código
             tipo: tipoCuenta,
             nombres: nombres,
             apellidos: apellidos,
