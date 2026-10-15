@@ -1,0 +1,64 @@
+/* ============================= */
+/* ANILLO NEÓN - INDICADOR DE NAV */
+/* Enlazar este archivo en TODAS las páginas: */
+/* <link rel="stylesheet" href="neon-nav.css"> */
+/* ============================= */
+
+:root{
+  --neon-rojo:#ff2b3d;
+  --neon-azul:#2b8cff;
+  --neon-morado:#a742ff;
+  --neon-amarillo:#ffd12b;
+  --neon-glow: var(--neon-rojo);
+}
+
+/* el <nav> necesita position:relative para que el anillo
+   se pueda posicionar dentro de él */
+nav{ position: relative; }
+
+.anillo-neon{
+  position:absolute;
+  top:50%; left:0;
+  width:38px; height:38px;
+  transform:translate(0,-50%);
+  border-radius:50%;
+  pointer-events:none;
+  transition:left .4s cubic-bezier(.65,0,.35,1),
+             background-color .4s ease,
+             opacity .2s ease;
+  z-index:0;
+  opacity:0;
+}
+
+.anillo-neon.listo{ opacity:1; }
+
+.anillo-neon::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:50%;
+  border:2px solid var(--neon-glow);
+  box-shadow:
+    0 0 6px var(--neon-glow),
+    0 0 14px var(--neon-glow),
+    0 0 26px var(--neon-glow),
+    inset 0 0 8px var(--neon-glow);
+  animation: neon-respira 2.4s ease-in-out infinite;
+}
+
+.anillo-neon::after{
+  content:"";
+  position:absolute; inset:-12px;
+  border-radius:50%;
+  background:radial-gradient(circle, var(--neon-glow) 0%, transparent 70%);
+  opacity:.3;
+  filter:blur(6px);
+}
+
+@keyframes neon-respira{
+  0%,100%{ box-shadow:0 0 6px var(--neon-glow),0 0 14px var(--neon-glow),0 0 26px var(--neon-glow),inset 0 0 8px var(--neon-glow); }
+  50%{ box-shadow:0 0 3px var(--neon-glow),0 0 8px var(--neon-glow),0 0 16px var(--neon-glow),inset 0 0 5px var(--neon-glow); }
+}
+
+/* el link activo se ve blanco/brillante, el resto igual que antes */
+nav a{ position:relative; z-index:1; }
+nav a.activo{ color:#ffffff !important; }

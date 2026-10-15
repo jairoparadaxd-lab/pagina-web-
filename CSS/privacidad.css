@@ -1,0 +1,1049 @@
+/* ============================= */
+/* CONFIGURACIÓN GENERAL */
+/* ============================= */
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+html,
+
+body {
+
+    width: 100%;
+
+    min-height: 100%;
+
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family:
+
+        Arial,
+
+        Helvetica,
+
+        sans-serif;
+
+    color: #ffffff;
+
+    background-color: #0d1117;
+
+    overflow: hidden;
+
+}
+
+
+/* ============================= */
+/* FONDO DE LA PÁGINA */
+/* ============================= */
+
+.fondo-privacidad {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100vh;
+
+    z-index: 1;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            #2b1013 0%,
+
+            #121113 18%,
+
+            #121113 82%,
+
+            #2b1013 100%
+
+        );
+
+    filter: blur(8px);
+
+    transform: scale(1.05);
+
+}
+
+
+/* ============================= */
+/* OSCURECER EL FONDO */
+/* ============================= */
+
+.fondo-oscuro {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100vh;
+
+    z-index: 2;
+
+    background-color:
+
+        rgba(0, 0, 0, 0.68);
+
+}
+
+
+/* ============================= */
+/* CONTENEDOR PRINCIPAL */
+/* ============================= */
+
+.privacidad-contenedor {
+
+    position: relative;
+
+    z-index: 3;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+
+    overflow-y: auto;
+
+}
+
+
+/* ============================= */
+/* TARJETA DE PRIVACIDAD */
+/* ============================= */
+
+.privacidad-tarjeta {
+
+    width: 100%;
+
+    max-width: 650px;
+
+    padding: 40px;
+
+    background-color:
+
+        rgba(13, 17, 23, 0.97);
+
+    border:
+
+        1px solid #21262d;
+
+    border-radius: 16px;
+
+    text-align: center;
+
+    box-shadow:
+
+        0 20px 60px
+
+        rgba(0, 0, 0, 0.55);
+
+    animation:
+
+        aparecer 0.5s ease;
+
+}
+
+
+/* ============================= */
+/* ANIMACIÓN DE APARICIÓN */
+/* ============================= */
+
+@keyframes aparecer {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* ============================= */
+/* LOGO */
+/* ============================= */
+
+.logo-privacidad {
+
+    width: 100px;
+
+    height: 100px;
+
+    object-fit: cover;
+
+    display: block;
+
+    margin:
+        0 auto 20px;
+
+    border-radius: 12px;
+
+    box-shadow:
+
+        0 8px 25px
+
+        rgba(0, 0, 0, 0.4);
+
+}
+
+
+/* ============================= */
+/* TÍTULO */
+/* ============================= */
+
+.privacidad-tarjeta h1 {
+
+    color: #ffffff;
+
+    font-size: 32px;
+
+    margin-bottom: 10px;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* ============================= */
+/* SUBTÍTULO */
+/* ============================= */
+
+.privacidad-subtitulo {
+
+    color: #f0f0f0;
+
+    font-size: 18px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* ============================= */
+/* TEXTO */
+/* ============================= */
+
+.privacidad-texto {
+
+    color: #9ba1a6;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* ============================= */
+/* ENLACE DE POLÍTICAS */
+/* ============================= */
+
+.enlace-privacidad {
+
+    color: #ff3b30;
+
+    text-decoration: underline;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+
+        color 0.3s ease;
+
+}
+
+.enlace-privacidad:hover {
+
+    color: #ff6b63;
+
+    text-decoration: underline;
+
+}
+
+
+/* ============================= */
+/* SECCIÓN DE IDIOMA */
+/* ============================= */
+
+.seleccion-idioma {
+
+    margin-top: 30px;
+
+}
+
+.seleccion-idioma h2 {
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* ============================= */
+/* BOTONES DE IDIOMA */
+/* ============================= */
+
+.botones-idioma {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    margin-top: 20px;
+
+}
+
+.boton-idioma {
+
+    min-width: 180px;
+
+    padding: 13px 20px;
+
+    background-color:
+
+        #e10600;
+
+    color: #ffffff;
+
+    border:
+
+        1px solid #e10600;
+
+    border-radius: 7px;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+
+        background-color 0.3s ease,
+
+        border-color 0.3s ease,
+
+        transform 0.2s ease,
+
+        box-shadow 0.2s ease;
+
+}
+
+.boton-idioma:hover {
+
+    background-color:
+
+        #ff3b30;
+
+    border-color:
+
+        #ff3b30;
+
+    transform:
+
+        translateY(-2px);
+
+    box-shadow:
+
+        0 7px 20px
+
+        rgba(225, 6, 0, 0.25);
+
+}
+
+.boton-idioma:active {
+
+    transform:
+
+        translateY(0);
+
+}
+
+
+/* ============================= */
+/* IDIOMA SELECCIONADO */
+/* ============================= */
+
+.boton-idioma.idioma-seleccionado {
+
+    background-color:
+
+        #ffffff;
+
+    color:
+
+        #e10600;
+
+    border-color:
+
+        #ffffff;
+
+    box-shadow:
+
+        0 0 0 2px
+
+        rgba(225, 6, 0, 0.35),
+
+        0 7px 20px
+
+        rgba(225, 6, 0, 0.15);
+
+}
+
+.boton-idioma.idioma-seleccionado:hover {
+
+    background-color:
+
+        #ffffff;
+
+    color:
+
+        #b80500;
+
+    border-color:
+
+        #ffffff;
+
+}
+
+
+/* ============================= */
+/* AVISO DE PRIVACIDAD */
+/* ============================= */
+
+.aviso-privacidad {
+
+    margin-top: 25px;
+
+    padding: 15px;
+
+    background-color:
+
+        rgba(255, 255, 255, 0.04);
+
+    border:
+
+        1px solid #21262d;
+
+    border-radius: 8px;
+
+}
+
+.aviso-privacidad p {
+
+    color: #777f87;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    margin: 0;
+
+}
+
+
+/* ============================= */
+/* CONTENEDOR DEL BOTÓN CONTINUAR */
+/* ============================= */
+
+.botones-continuar {
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 25px;
+
+}
+
+
+/* ============================= */
+/* BOTÓN CONTINUAR */
+/* ============================= */
+
+.boton-continuar {
+
+    width: 100%;
+
+    max-width: 380px;
+
+    padding: 14px 24px;
+
+    border:
+
+        1px solid #e10600;
+
+    border-radius: 8px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #e10600,
+
+            #b80500
+
+        );
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 8px 20px
+
+        rgba(225, 6, 0, 0.20);
+
+    transition:
+
+        background 0.3s ease,
+
+        border-color 0.3s ease,
+
+        transform 0.2s ease,
+
+        box-shadow 0.3s ease,
+
+        opacity 0.3s ease;
+
+}
+
+
+/* ============================= */
+/* BOTÓN CONTINUAR ACTIVADO */
+/* ============================= */
+
+.boton-continuar:not(:disabled):hover {
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #ff3b30,
+
+            #e10600
+
+        );
+
+    border-color:
+
+        #ff3b30;
+
+    transform:
+
+        translateY(-2px);
+
+    box-shadow:
+
+        0 10px 25px
+
+        rgba(225, 6, 0, 0.32);
+
+}
+
+.boton-continuar:not(:disabled):active {
+
+    transform:
+
+        translateY(0);
+
+    box-shadow:
+
+        0 5px 14px
+
+        rgba(225, 6, 0, 0.20);
+
+}
+
+
+/* ============================= */
+/* BOTÓN CONTINUAR DESACTIVADO */
+/* ============================= */
+
+.boton-continuar:disabled {
+
+    background:
+
+        #252a31;
+
+    border-color:
+
+        #343a42;
+
+    color:
+
+        #6e7681;
+
+    cursor:
+
+        not-allowed;
+
+    box-shadow:
+
+        none;
+
+    opacity:
+
+        0.75;
+
+}
+
+
+/* ============================= */
+/* PIE DE LA TARJETA */
+/* ============================= */
+
+.privacidad-pie {
+
+    margin-top: 25px;
+
+    color: #6e7681;
+
+    font-size: 12px;
+
+}
+
+
+/* ============================= */
+/* MODO CLARO */
+/* ============================= */
+
+body.modo-claro {
+
+    color: #171717;
+
+}
+
+body.modo-claro .fondo-privacidad {
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            #e8e8e8 0%,
+
+            #f5f5f5 18%,
+
+            #f5f5f5 82%,
+
+            #e8e8e8 100%
+
+        );
+
+}
+
+body.modo-claro .fondo-oscuro {
+
+    background-color:
+
+        rgba(255, 255, 255, 0.45);
+
+}
+
+body.modo-claro .privacidad-tarjeta {
+
+    background-color:
+
+        rgba(255, 255, 255, 0.97);
+
+    border-color:
+
+        #d5d5d5;
+
+    box-shadow:
+
+        0 20px 60px
+
+        rgba(0, 0, 0, 0.2);
+
+}
+
+body.modo-claro .privacidad-tarjeta h1,
+
+body.modo-claro .seleccion-idioma h2 {
+
+    color:
+
+        #171717;
+
+}
+
+body.modo-claro .privacidad-subtitulo {
+
+    color:
+
+        #333333;
+
+}
+
+body.modo-claro .privacidad-texto {
+
+    color:
+
+        #555555;
+
+}
+
+body.modo-claro .enlace-privacidad {
+
+    color:
+
+        #d00000;
+
+}
+
+body.modo-claro .enlace-privacidad:hover {
+
+    color:
+
+        #e10600;
+
+}
+
+body.modo-claro .aviso-privacidad {
+
+    background-color:
+
+        #f5f5f5;
+
+    border-color:
+
+        #d5d5d5;
+
+}
+
+body.modo-claro .aviso-privacidad p {
+
+    color:
+
+        #666666;
+
+}
+
+
+/* ============================= */
+/* BOTONES - MODO CLARO */
+/* ============================= */
+
+body.modo-claro .boton-idioma {
+
+    background-color:
+
+        #e10600;
+
+    color:
+
+        #ffffff;
+
+    border-color:
+
+        #e10600;
+
+}
+
+body.modo-claro .boton-idioma:hover {
+
+    background-color:
+
+        #ff3b30;
+
+    border-color:
+
+        #ff3b30;
+
+}
+
+body.modo-claro .boton-idioma.idioma-seleccionado {
+
+    background-color:
+
+        #ffffff;
+
+    color:
+
+        #e10600;
+
+    border-color:
+
+        #d5d5d5;
+
+}
+
+
+/* ============================= */
+/* BOTÓN CONTINUAR - MODO CLARO */
+/* ============================= */
+
+body.modo-claro .boton-continuar:disabled {
+
+    background:
+
+        #e5e5e5;
+
+    border-color:
+
+        #d5d5d5;
+
+    color:
+
+        #888888;
+
+}
+
+
+/* ============================= */
+/* PIE - MODO CLARO */
+/* ============================= */
+
+body.modo-claro .privacidad-pie {
+
+    color:
+
+        #777777;
+
+}
+
+
+/* ============================= */
+/* TABLETAS */
+/* ============================= */
+
+@media (max-width: 700px) {
+
+    .privacidad-contenedor {
+
+        padding: 20px;
+
+    }
+
+    .privacidad-tarjeta {
+
+        padding: 30px 25px;
+
+    }
+
+    .logo-privacidad {
+
+        width: 85px;
+
+        height: 85px;
+
+    }
+
+    .privacidad-tarjeta h1 {
+
+        font-size: 28px;
+
+    }
+
+    .privacidad-subtitulo {
+
+        font-size: 17px;
+
+    }
+
+    .privacidad-texto {
+
+        font-size: 14px;
+
+    }
+
+}
+
+
+/* ============================= */
+/* CELULARES */
+/* ============================= */
+
+@media (max-width: 500px) {
+
+    .privacidad-contenedor {
+
+        padding: 15px;
+
+    }
+
+    .privacidad-tarjeta {
+
+        padding: 25px 18px;
+
+        border-radius: 12px;
+
+    }
+
+    .logo-privacidad {
+
+        width: 75px;
+
+        height: 75px;
+
+        margin-bottom: 15px;
+
+    }
+
+    .privacidad-tarjeta h1 {
+
+        font-size: 25px;
+
+    }
+
+    .privacidad-subtitulo {
+
+        font-size: 16px;
+
+    }
+
+    .privacidad-texto {
+
+        font-size: 13px;
+
+    }
+
+    .seleccion-idioma h2 {
+
+        font-size: 18px;
+
+    }
+
+    .botones-idioma {
+
+        flex-direction: column;
+
+        gap: 10px;
+
+    }
+
+    .boton-idioma {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+    .aviso-privacidad {
+
+        padding: 12px;
+
+    }
+
+    .aviso-privacidad p {
+
+        font-size: 12px;
+
+    }
+
+    .botones-continuar {
+
+        margin-top: 20px;
+
+    }
+
+    .boton-continuar {
+
+        max-width: none;
+
+        padding: 13px 20px;
+
+        font-size: 15px;
+
+    }
+
+    .privacidad-pie {
+
+        font-size: 11px;
+
+    }
+
+}
+
+
+/* ============================= */
+/* PANTALLAS MUY PEQUEÑAS */
+/* ============================= */
+
+@media (max-height: 650px) {
+
+    .privacidad-contenedor {
+
+        align-items: flex-start;
+
+        padding-top: 20px;
+
+        padding-bottom: 20px;
+
+    }
+
+    .privacidad-tarjeta {
+
+        margin:
+
+            10px 0;
+
+    }
+
+}
+

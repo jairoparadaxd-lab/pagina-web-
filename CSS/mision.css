@@ -1,0 +1,855 @@
+/* ============================= */
+/* CONFIGURACIÓN GENERAL */
+/* ============================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      90deg,
+      #2b1013 0%,
+      #121113 18%,
+      #121113 82%,
+      #2b1013 100%
+    );
+
+  color: #ffffff;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  line-height: 1.6;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ============================= */
+/* ENCABEZADO */
+/* ============================= */
+
+header {
+  position: sticky;
+  top: 0;
+
+  z-index: 1000;
+
+  width: 100%;
+  min-height: 70px;
+
+  padding: 10px 4%;
+
+  display: flex;
+  align-items: center;
+
+  background-color: #0d1117;
+
+  border-bottom: 1px solid #21262d;
+}
+
+/* ============================= */
+/* CONTENEDOR DEL ENCABEZADO */
+/* ============================= */
+
+.header-contenido {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+}
+
+/* ============================= */
+/* LOGO */
+/* ============================= */
+
+.logo {
+  flex-shrink: 0;
+}
+
+.logo img {
+  width: 65px;
+  height: auto;
+
+  display: block;
+
+  border-radius: 6px;
+}
+
+/* ============================= */
+/* MENÚ PRINCIPAL */
+/* ============================= */
+
+nav {
+  flex: 1;
+
+  position: static;
+
+  width: auto;
+  height: auto;
+
+  padding: 0;
+
+  background-color: transparent;
+
+  border: none;
+
+  overflow: visible;
+}
+
+nav ul {
+  list-style: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+}
+
+nav li {
+  width: auto;
+}
+
+nav a {
+  display: block;
+
+  padding: 9px 11px;
+
+  color: #9ba1a6;
+
+  text-decoration: none;
+
+  font-size: 14px;
+
+  border-radius: 6px;
+
+  white-space: nowrap;
+
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+nav a:hover {
+  color: #ffffff;
+
+  background-color: #1a1f27;
+}
+
+/* ============================= */
+/* CONTROLES DEL NAVBAR */
+/* ============================= */
+
+.header-controles {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  flex-shrink: 0;
+}
+
+.header-controles button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 8px 10px;
+
+  background-color: #161b22;
+
+  color: #ffffff;
+
+  border: 1px solid #21262d;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.header-controles button:hover {
+  background-color: #1a1f27;
+
+  transform: translateY(-1px);
+}
+
+.header-controles .btn-icon {
+  font-size: 14px;
+
+  line-height: 1;
+}
+
+/* ============================= */
+/* BOTÓN INICIAR SESIÓN */
+/* ============================= */
+
+#boton-iniciar-sesion {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 9px 15px;
+
+  background-color: #e10600;
+
+  color: #ffffff;
+
+  border-radius: 6px;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  white-space: nowrap;
+
+  flex-shrink: 0;
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+#boton-iniciar-sesion:hover {
+  background-color: #ff3b30;
+
+  transform: translateY(-1px);
+}
+
+/* ============================= */
+/* BOTÓN MENÚ HAMBURGUESA */
+/* ============================= */
+
+.menu_Togger {
+  display: none;
+
+  position: relative;
+
+  width: 45px;
+  height: 45px;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 6px;
+
+  background-color: #0d1117;
+
+  border: 1px solid #21262d;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  z-index: 1100;
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.menu_Togger:hover {
+  background-color: #1a1f27;
+}
+
+.menu_Togger:active {
+  transform: scale(0.95);
+}
+
+/* ============================= */
+/* LÍNEAS DEL MENÚ */
+/* ============================= */
+
+.menu_Togger .line {
+  width: 25px;
+  height: 3px;
+
+  display: block;
+
+  background-color: #ffffff;
+
+  border-radius: 3px;
+
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* ============================= */
+/* MENÚ ACTIVO */
+/* ============================= */
+
+.menu_Togger.active .line:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.menu_Togger.active .line:nth-child(2) {
+  opacity: 0;
+}
+
+.menu_Togger.active .line:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* ============================= */
+/* FONDO DEL MENÚ */
+/* ============================= */
+
+.fondo-menu {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  background-color: rgba(0, 0, 0, 0.65);
+
+  z-index: 1000;
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.fondo-menu.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============================= */
+/* CONTENIDO PRINCIPAL */
+/* ============================= */
+
+main {
+  width: 90%;
+
+  max-width: 1200px;
+
+  margin: 0 auto;
+}
+
+/* ============================= */
+/* SECCIÓN MISIÓN */
+/* ============================= */
+
+.mision-contenido {
+  min-height: 650px;
+
+  margin: 50px 0;
+
+  padding: 55px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: flex-start;
+
+  background-color: #0d1117;
+
+  border: 1px solid #21262d;
+
+  border-radius: 12px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.mision-texto {
+  max-width: 850px;
+}
+
+/* ============================= */
+/* TÍTULO */
+/* ============================= */
+
+.mision-contenido h1 {
+  color: #ffffff;
+
+  font-size: 70px;
+
+  letter-spacing: 4px;
+
+  margin-bottom: 20px;
+
+  transition: color 0.3s ease;
+}
+
+/* ============================= */
+/* LÍNEA */
+/* ============================= */
+
+.mision-linea {
+  width: 90px;
+
+  height: 4px;
+
+  margin-bottom: 30px;
+
+  background-color: #e10600;
+
+  border-radius: 4px;
+}
+
+/* ============================= */
+/* TEXTO */
+/* ============================= */
+
+.mision-contenido p {
+  max-width: 800px;
+
+  color: #9ba1a6;
+
+  font-size: 20px;
+
+  line-height: 1.9;
+
+  margin-bottom: 15px;
+}
+
+/* ============================= */
+/* PIE DE PÁGINA */
+/* ============================= */
+
+footer {
+  margin-top: 60px;
+
+  padding: 30px 5%;
+
+  background-color: #0d1117;
+
+  border-top: 1px solid #21262d;
+
+  text-align: center;
+}
+
+footer p {
+  color: #6e7681;
+
+  font-size: 14px;
+
+  margin-bottom: 5px;
+}
+
+/* ============================= */
+/* TRANSICIONES */
+/* ============================= */
+
+body,
+header,
+nav,
+section,
+footer,
+.header-controles button,
+.menu_Togger,
+#boton-iniciar-sesion {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* ============================= */
+/* MODO CLARO */
+/* ============================= */
+
+body.modo-claro {
+  background:
+    linear-gradient(
+      90deg,
+      #e8e8e8 0%,
+      #f5f5f5 18%,
+      #f5f5f5 82%,
+      #e8e8e8 100%
+    );
+
+  color: #171717;
+}
+
+/* ============================= */
+/* ENCABEZADO - MODO CLARO */
+/* ============================= */
+
+body.modo-claro header {
+  background-color: #ffffff;
+
+  border-bottom-color: #d5d5d5;
+}
+
+/* ============================= */
+/* MENÚ - MODO CLARO */
+/* ============================= */
+
+body.modo-claro nav a {
+  color: #555555;
+}
+
+body.modo-claro nav a:hover {
+  color: #171717;
+
+  background-color: #eeeeee;
+}
+
+/* ============================= */
+/* CONTROLES - MODO CLARO */
+/* ============================= */
+
+body.modo-claro .header-controles button {
+  background-color: #ffffff;
+
+  color: #171717;
+
+  border-color: #d5d5d5;
+}
+
+body.modo-claro .header-controles button:hover {
+  background-color: #eeeeee;
+}
+
+/* ============================= */
+/* BOTÓN HAMBURGUESA - MODO CLARO */
+/* ============================= */
+
+body.modo-claro .menu_Togger {
+  background-color: #ffffff;
+
+  border-color: #d5d5d5;
+}
+
+body.modo-claro .menu_Togger:hover {
+  background-color: #eeeeee;
+}
+
+body.modo-claro .menu_Togger .line {
+  background-color: #171717;
+}
+
+/* ============================= */
+/* BOTÓN LOGIN - MODO CLARO */
+/* ============================= */
+
+body.modo-claro #boton-iniciar-sesion {
+  color: #ffffff;
+}
+
+/* ============================= */
+/* MISIÓN - MODO CLARO */
+/* ============================= */
+
+body.modo-claro .mision-contenido {
+  background-color: #ffffff;
+
+  border-color: #d5d5d5;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+body.modo-claro .mision-contenido h1 {
+  color: #171717;
+}
+
+body.modo-claro .mision-contenido p {
+  color: #555555;
+}
+
+/* ============================= */
+/* PIE - MODO CLARO */
+/* ============================= */
+
+body.modo-claro footer {
+  background-color: #ffffff;
+
+  border-top-color: #d5d5d5;
+}
+
+body.modo-claro footer p {
+  color: #777777;
+}
+
+/* ============================= */
+/* TABLETS */
+/* ============================= */
+
+@media (max-width: 1100px) {
+  header {
+    padding: 9px 3%;
+  }
+
+  nav ul {
+    gap: 1px;
+  }
+
+  nav a {
+    padding: 8px 7px;
+
+    font-size: 13px;
+  }
+
+  .header-controles {
+    gap: 5px;
+  }
+
+  .header-controles button {
+    padding: 8px;
+  }
+
+  .header-controles .btn-label {
+    display: none;
+  }
+
+  #boton-iniciar-sesion {
+    padding: 8px 11px;
+
+    font-size: 12px;
+  }
+}
+
+/* ============================= */
+/* TABLETAS PEQUEÑAS */
+/* ============================= */
+
+@media (max-width: 850px) {
+  header {
+    min-height: 65px;
+
+    padding: 8px 4%;
+  }
+
+  .header-contenido {
+    justify-content: space-between;
+
+    gap: 8px;
+  }
+
+  .logo {
+    margin-right: auto;
+  }
+
+  .logo img {
+    width: 60px;
+  }
+
+  /* HAMBURGUESA */
+
+  .menu_Togger {
+    display: flex;
+
+    order: 4;
+  }
+
+  /* CONTROLES */
+
+  .header-controles {
+    order: 2;
+  }
+
+  /* LOGIN */
+
+  #boton-iniciar-sesion {
+    order: 3;
+  }
+
+  /* MENÚ LATERAL */
+
+  nav {
+    position: fixed;
+
+    top: 0;
+
+    right: -320px;
+
+    width: 300px;
+
+    height: 100vh;
+
+    padding: 100px 30px 30px;
+
+    background-color: #0d1117;
+
+    border-left: 1px solid #21262d;
+
+    z-index: 1050;
+
+    overflow-y: auto;
+
+    transition: right 0.3s ease;
+  }
+
+  nav.menu-abierto {
+    right: 0;
+  }
+
+  nav ul {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 8px;
+  }
+
+  nav li {
+    width: 100%;
+  }
+
+  nav a {
+    width: 100%;
+
+    padding: 13px 15px;
+
+    font-size: 16px;
+  }
+
+  main {
+    width: 94%;
+  }
+}
+
+/* ============================= */
+/* MÓVILES */
+/* ============================= */
+
+@media (max-width: 600px) {
+  header {
+    min-height: 65px;
+
+    padding: 8px 4%;
+  }
+
+  .logo img {
+    width: 55px;
+  }
+
+  /* CONTROLES */
+
+  .header-controles {
+    gap: 4px;
+  }
+
+  .header-controles button {
+    width: 38px;
+
+    height: 38px;
+
+    padding: 0;
+  }
+
+  .header-controles .btn-label {
+    display: none;
+  }
+
+  /* LOGIN */
+
+  #boton-iniciar-sesion {
+    width: 40px;
+
+    height: 38px;
+
+    padding: 0;
+
+    font-size: 0;
+  }
+
+  #boton-iniciar-sesion::before {
+    content: "👤";
+
+    font-size: 17px;
+  }
+
+  /* HAMBURGUESA */
+
+  .menu_Togger {
+    width: 40px;
+
+    height: 40px;
+  }
+
+  .menu_Togger .line {
+    width: 23px;
+  }
+
+  /* MENÚ */
+
+  nav {
+    width: 280px;
+
+    right: -300px;
+  }
+
+  /* CONTENIDO */
+
+  main {
+    width: 94%;
+  }
+
+  .mision-contenido {
+    min-height: 500px;
+
+    margin: 30px 0;
+
+    padding: 35px 25px;
+  }
+
+  .mision-contenido h1 {
+    font-size: 45px;
+  }
+
+  .mision-contenido p {
+    font-size: 17px;
+
+    line-height: 1.7;
+  }
+}
+
+/* ============================= */
+/* PANTALLAS GRANDES */
+/* ============================= */
+
+@media (min-width: 1000px) {
+  .mision-contenido {
+    padding: 55px;
+  }
+
+  .mision-contenido {
+    min-height: 650px;
+  }
+}

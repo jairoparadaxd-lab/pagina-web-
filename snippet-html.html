@@ -1,0 +1,34 @@
+
+<div class="pw-meter" id="pw-meter" aria-live="polite">
+
+    <div class="pw-lock" aria-hidden="true">
+        <svg viewBox="0 -4 64 68" width="64" height="68">
+            <g class="pw-shackle" id="pw-shackle" style="transform: translateY(-9px)">
+                <path d="M20 30 V20 a12 12 0 0 1 24 0 V30" />
+            </g>
+            <rect class="pw-body" x="10" y="28" width="44" height="32" rx="8" />
+            <circle class="pw-keyhole" cx="32" cy="41" r="4.5" />
+            <rect class="pw-keyhole" x="30" y="43" width="4" height="9" rx="2" />
+        </svg>
+    </div>
+
+    <div class="pw-info">
+        <div class="pw-row">
+            <strong class="pw-label" id="pw-label">Sin contraseña</strong>
+            <span id="pw-bits">0 bits</span>
+        </div>
+        <div class="pw-bar"><i class="pw-fill" id="pw-fill"></i></div>
+        <p class="pw-msg" id="pw-msg">El candado está abierto.</p>
+    </div>
+
+    <ul class="pw-reqs">
+        <li data-req="largo">8+ caracteres</li>
+        <li data-req="mayus">Mayúscula</li>
+        <li data-req="minus">Minúscula</li>
+        <li data-req="numero">Número</li>
+        <li data-req="simbolo">Símbolo</li>
+    </ul>
+
+</div>
+
+

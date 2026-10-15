@@ -1,0 +1,276 @@
+/* ============================= */
+/* FECHA DE NACIMIENTO (CALENDARIO) */
+/* ============================= */
+
+.fecha-campo {
+    position: relative;
+}
+
+.fecha-campo input[type="text"] {
+    padding-right: 46px;
+}
+
+.fecha-abrir {
+    position: absolute;
+
+    top: 50%;
+    right: 10px;
+
+    transform: translateY(-50%);
+
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: none;
+
+    border: none;
+    border-radius: 6px;
+
+    color: #9ba1a6;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.fecha-abrir:hover {
+    color: #ffffff;
+
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.form-hint-error {
+    color: #ff6b61;
+}
+
+
+/* ---------- Ventana del calendario ---------- */
+
+.fecha-popup {
+    position: absolute;
+
+    top: calc(100% + 6px);
+    left: 0;
+
+    width: 100%;
+
+    padding: 14px 14px 12px;
+
+    background-color: #0d1117;
+
+    border: 1px solid #21262d;
+    border-radius: 12px;
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+
+    z-index: 30;
+
+    animation: apareceVista 0.2s ease;
+}
+
+.fecha-popup[hidden] {
+    display: none;
+}
+
+
+/* ---------- Chips de años ---------- */
+
+.fecha-anios {
+    position: relative;
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-bottom: 14px;
+    padding-bottom: 2px;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+}
+
+.fecha-anios::-webkit-scrollbar {
+    display: none;
+}
+
+.fecha-anio {
+    flex: 0 0 auto;
+
+    padding: 6px 12px;
+
+    background-color: #161b22;
+
+    border: 1px solid transparent;
+    border-radius: 16px;
+
+    color: #9ba1a6;
+
+    font-size: 12px;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.fecha-anio:hover {
+    color: #ffffff;
+}
+
+.fecha-anio.activo {
+    background-color: rgba(225, 6, 0, 0.18);
+
+    border-color: rgba(225, 6, 0, 0.45);
+
+    color: #ff6b61;
+}
+
+
+/* ---------- Mes y año con flechas ---------- */
+
+.fecha-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+}
+
+.fecha-titulo {
+    font-size: 14px;
+
+    color: #ffffff;
+}
+
+.fecha-nav {
+    width: 32px;
+    height: 32px;
+
+    background: none;
+
+    border: none;
+    border-radius: 8px;
+
+    color: #9ba1a6;
+
+    font-size: 20px;
+    line-height: 1;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.fecha-nav:hover:not(:disabled) {
+    color: #ffffff;
+
+    background-color: #161b22;
+}
+
+.fecha-nav:disabled {
+    color: #3d444d;
+
+    cursor: default;
+}
+
+
+/* ---------- Días ---------- */
+
+.fecha-grilla {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+
+    gap: 2px;
+}
+
+.fecha-semana {
+    padding: 8px 0;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    color: #6e7681;
+}
+
+.fecha-dia {
+    height: 36px;
+
+    background: none;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    color: #c9d1d9;
+
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.fecha-dia:hover:not(:disabled) {
+    background-color: #161b22;
+
+    color: #ffffff;
+}
+
+.fecha-dia.hoy {
+    border-color: #444c56;
+}
+
+.fecha-dia.elegido,
+.fecha-dia.elegido:hover {
+    background-color: #e10600;
+
+    border-color: #e10600;
+
+    color: #ffffff;
+}
+
+.fecha-dia:disabled {
+    color: #3d444d;
+
+    cursor: not-allowed;
+}
+
+.fecha-abrir:focus-visible,
+.fecha-anio:focus-visible,
+.fecha-nav:focus-visible,
+.fecha-dia:focus-visible {
+    outline: 2px solid #ff453a;
+    outline-offset: 1px;
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 600px) {
+
+    .fecha-popup {
+        padding: 12px 10px 10px;
+    }
+
+    .fecha-dia {
+        height: 34px;
+    }
+
+}

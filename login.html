@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TrueLock - Inicia sesión, recupera tu contraseña o crea una cuenta.">
+    <title>TrueLock | Iniciar sesión</title>
+
+    <link rel="icon" type="image/jpeg" href="imagenes/logo.png">
+    <link rel="stylesheet" href="CSS/login.css">
+    <link rel="stylesheet" href="CSS/fuerza-contraseña.css">
+    <link rel="stylesheet" href="CSS/verificacion.css">
+    <link rel="stylesheet" href="CSS/fecha-nacimiento.css">
+    <link rel="stylesheet" href="CSS/terminos.css">
+    <link rel="stylesheet" href="CSS/institucion.css">
+</head>
+
+<body class="login-body">
+
+    <!-- ============================= -->
+    <!-- VISTA: INICIAR SESIÓN -->
+    <!-- ============================= -->
+
+    <div class="auth-view active" id="view-login">
+
+        <div class="auth-card">
+
+            <div class="auth-logo">
+                <img src="imagenes/logo.png" alt="TrueLock">
+            </div>
+
+            <h1 class="auth-title">TrueLock</h1>
+            <p class="auth-subtitle">Control Parental Avanzado</p>
+            <p class="auth-terms">
+                Al continuar aceptas los
+                <a href="#" class="terminos-link" data-abrir-terminos>Términos y Condiciones</a>
+            </p>
+
+            <form id="form-login" novalidate>
+
+                <div class="auth-alert" id="login-alert" role="alert" hidden></div>
+
+                <div class="auth-tabs" data-group="login" role="tablist">
+                    <button type="button" class="auth-tab activo" data-tab="correo" role="tab"
+                        aria-selected="true">✉️ Correo</button>
+                    <button type="button" class="auth-tab" data-tab="telefono" role="tab"
+                        aria-selected="false">📱 Teléfono</button>
+                </div>
+
+                <div class="form-group auth-tab-panel" data-group="login" data-tab="correo">
+                    <label for="login-email">Correo Electrónico</label>
+                    <input type="email" id="login-email" name="email" placeholder="tu@correo.com"
+                        autocomplete="email" maxlength="100">
+                </div>
+
+                <div class="form-group auth-tab-panel" data-group="login" data-tab="telefono" hidden>
+                    <label for="login-telefono">Número de Teléfono</label>
+                    <div class="phone-wrapper">
+                        <div class="phone-code-select" data-selector-telefono>
+                            <button type="button" class="phone-code-btn" aria-haspopup="listbox"
+                                aria-expanded="false">
+                                <img class="phone-flag" src="https://flagcdn.com/w40/co.png" alt="CO">
+                                <span class="phone-code-label">+57</span>
+                                <svg class="phone-code-arrow" viewBox="0 0 24 24" width="12" height="12">
+                                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <ul class="phone-code-list" role="listbox" hidden></ul>
+                        </div>
+                        <input type="tel" id="login-telefono" placeholder="Número de teléfono"
+                            autocomplete="tel" inputmode="numeric" maxlength="10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" name="password" placeholder="Tu contraseña"
+                            autocomplete="current-password">
+                        <button type="button" class="toggle-password" data-target="login-password"
+                            aria-label="Mostrar contraseña">
+                            <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20">
+                                <path
+                                    d="M12 5C6.5 5 2.7 8.4 1 12c1.7 3.6 5.5 7 11 7s9.3-3.4 11-7c-1.7-3.6-5.5-7-11-7zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9zm0-7A2.5 2.5 0 1 0 12 14a2.5 2.5 0 0 0 0-5z"
+                                    fill="currentColor" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row-link">
+                    <a href="#" class="nav-link" data-target="view-recuperar">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-primary">Iniciar Sesión</button>
+
+                <p class="auth-switch">
+                    ¿No tienes cuenta?
+                    <a href="#" class="nav-link" data-target="view-registro">Regístrate aquí</a>
+                </p>
+
+            </form>
+
+            <div class="auth-footer-tags">
+                Protección en Tiempo Real&nbsp;&nbsp;•&nbsp;&nbsp;100% Seguro
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- VISTA: RECUPERAR CONTRASEÑA -->
+    <!-- ============================= -->
+
+    <div class="auth-view" id="view-recuperar">
+
+        <div class="auth-card">
+
+            <div class="auth-logo">
+                <img src="IMAGENES/logo.png" alt="TrueLock">
+            </div>
+
+            <h1 class="auth-title">Recuperar Contraseña</h1>
+            <p class="auth-subtitle">Verifica tu identidad para restablecer tu contraseña.</p>
+
+            <form id="form-recuperar" novalidate>
+
+                <div class="auth-alert" id="recuperar-alert" role="alert" hidden></div>
+
+                <div class="auth-tabs auth-tabs-pill" data-group="recuperar" role="tablist">
+                    <button type="button" class="auth-tab activo" data-tab="correo" role="tab"
+                        aria-selected="true">✉️ Correo</button>
+                    <button type="button" class="auth-tab" data-tab="telefono" role="tab"
+                        aria-selected="false">📱 Teléfono</button>
+                </div>
+
+                <div class="auth-tab-panel" data-group="recuperar" data-tab="correo">
+                    <div class="form-group">
+                        <label for="recuperar-email">Correo Electrónico</label>
+                        <input type="email" id="recuperar-email" name="email" placeholder="tu@correo.com"
+                            autocomplete="email" maxlength="100">
+                    </div>
+                    <button type="submit" class="btn-primary">Enviar enlace de recuperación</button>
+                </div>
+
+                <div class="auth-tab-panel" data-group="recuperar" data-tab="telefono" hidden>
+                    <div class="form-group">
+                        <label for="recuperar-telefono">Número de teléfono</label>
+                        <div class="phone-wrapper">
+                            <div class="phone-code-select" data-selector-telefono>
+                                <button type="button" class="phone-code-btn" aria-haspopup="listbox"
+                                    aria-expanded="false">
+                                    <img class="phone-flag" src="https://flagcdn.com/w40/co.png" alt="CO">
+                                    <span class="phone-code-label">+57</span>
+                                    <svg class="phone-code-arrow" viewBox="0 0 24 24" width="12" height="12">
+                                        <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </button>
+                                <ul class="phone-code-list" role="listbox" hidden></ul>
+                            </div>
+                            <input type="tel" id="recuperar-telefono" placeholder="Número de teléfono"
+                                autocomplete="tel" inputmode="numeric" maxlength="10">
+                        </div>
+                        <p class="form-hint form-hint-neutral">Ingresa el número asociado a tu cuenta.</p>
+                    </div>
+                    <button type="submit" class="btn-primary">Verificar teléfono</button>
+                </div>
+
+            </form>
+
+            <a href="#" class="back-link nav-link" data-target="view-login">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Volver al inicio de sesión
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- VISTA: CREAR CUENTA -->
+    <!-- ============================= -->
+
+    <div class="auth-view" id="view-registro">
+
+        <div class="auth-card">
+
+            <div class="auth-logo">
+                <img src="IMAGENES/logo.png" alt="TrueLock">
+            </div>
+
+            <h1 class="auth-title">Crear Cuenta</h1>
+            <p class="auth-subtitle">Regístrate en TrueLock</p>
+
+            <form id="form-registro" novalidate>
+
+                <div class="form-group">
+                    <label for="registro-tipo">Tipo de cuenta</label>
+                    <select id="registro-tipo" name="tipo">
+                        <option value="participante" data-hint="Solo lectura de configuraciones">Participante</option>
+                        <option value="director" data-hint="Puede editar bloqueos y revisar reportes">Director
+                        </option>
+                        <option value="administrador" data-hint="Control total sobre usuarios y configuraciones">
+                            Administrador</option>
+                    </select>
+                    <p class="form-hint" id="registro-tipo-hint">
+                        <svg viewBox="0 0 24 24" width="13" height="13">
+                            <path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Solo lectura de configuraciones
+                    </p>
+                </div>
+
+                <!-- INSTITUCIÓN EDUCATIVA (solo se muestra si el tipo de cuenta es Director) -->
+
+                <div class="form-group" id="grupo-institucion" hidden>
+                    <label for="registro-institucion">Institución educativa</label>
+
+                    <div class="inst-combo" id="inst-combo">
+                        <input type="text" id="registro-institucion"
+                            placeholder="Busca tu colegio, universidad o SENA"
+                            autocomplete="off" maxlength="120" role="combobox"
+                            aria-expanded="false" aria-controls="inst-lista" aria-autocomplete="list">
+                        <ul class="inst-lista" id="inst-lista" role="listbox" hidden></ul>
+                    </div>
+
+                    <p class="form-hint form-hint-neutral" id="inst-hint">
+                        Escribe al menos 3 letras para buscar.
+                    </p>
+
+                    <label class="inst-check">
+                        <input type="checkbox" id="inst-no-aparece">
+                        <span>Mi institución no aparece en la lista</span>
+                    </label>
+
+                    <div class="inst-manual" id="inst-manual" hidden>
+
+                        <p class="form-hint form-hint-neutral">
+                            Para validar que tu institución existe, necesitamos un código oficial
+                            o un contacto institucional.
+                        </p>
+
+                        <label for="inst-m-nombre">Nombre completo de la institución</label>
+                        <input type="text" id="inst-m-nombre" maxlength="120" autocomplete="off"
+                            placeholder="Como aparece en su registro oficial">
+
+                        <label for="inst-m-tipo">Tipo de institución</label>
+                        <select id="inst-m-tipo">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option value="colegio">Colegio / Escuela</option>
+                            <option value="universidad">Universidad / Institución universitaria</option>
+                            <option value="tecnologico">Instituto técnico o tecnológico</option>
+                            <option value="sena">SENA (centro o regional)</option>
+                            <option value="otro">Otro</option>
+                        </select>
+
+                        <label for="inst-m-departamento">Departamento</label>
+                        <select id="inst-m-departamento">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                        </select>
+
+                        <label for="inst-m-municipio">Municipio</label>
+                        <input type="text" id="inst-m-municipio" maxlength="60" autocomplete="off"
+                            placeholder="Ej: Soacha">
+
+                        <label for="inst-m-codigo">Código oficial (DANE, SNIES o NIT)</label>
+                        <input type="text" id="inst-m-codigo" maxlength="14" autocomplete="off"
+                            inputmode="numeric" placeholder="Opcional si das un contacto">
+                        <p class="form-hint form-hint-neutral" id="inst-m-codigo-hint">
+                            Colegios: código DANE (12 dígitos). Universidades: código SNIES. Otros: NIT.
+                        </p>
+
+                        <label for="inst-m-contacto">Correo institucional o sitio web</label>
+                        <input type="text" id="inst-m-contacto" maxlength="120" autocomplete="off"
+                            placeholder="rectoria@micolegio.edu.co o https://micolegio.edu.co">
+
+                    </div>
+                </div>
+
+                <!-- NOMBRES Y APELLIDOS EN CAMPOS SEPARADOS -->
+
+                <div class="form-group">
+                    <label for="registro-nombres">Nombres</label>
+                    <input type="text" id="registro-nombres" name="nombres" placeholder="Tus nombres"
+                        required autocomplete="given-name" maxlength="60">
+                </div>
+
+                <div class="form-group">
+                    <label for="registro-apellidos">Apellidos</label>
+                    <input type="text" id="registro-apellidos" name="apellidos" placeholder="Tus apellidos"
+                        required autocomplete="family-name" maxlength="60">
+                </div>
+
+                <!-- NOMBRE DE USUARIO: solo letras, números, punto, guion bajo y guion (lo controla login.js) -->
+
+                <div class="form-group">
+                    <label for="registro-usuario">Nombre de usuario</label>
+                    <input type="text" id="registro-usuario" name="usuario" placeholder="tu.usuario"
+                        required autocomplete="username" maxlength="20" autocapitalize="none" spellcheck="false">
+                    <p class="form-hint form-hint-neutral" id="usuario-hint"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="registro-fecha-visible">Fecha de Nacimiento</label>
+                    <div class="fecha-campo" id="fecha-campo">
+                        <input type="text" id="registro-fecha-visible" placeholder="DD / MM / AAAA"
+                            inputmode="numeric" autocomplete="off" maxlength="14">
+                        <input type="hidden" id="registro-fecha-nacimiento" name="fecha_nacimiento">
+                        <button type="button" class="fecha-abrir" id="fecha-abrir" aria-label="Abrir calendario"
+                            aria-haspopup="dialog" aria-expanded="false">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" />
+                                <path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                        <div class="fecha-popup" id="fecha-popup" role="dialog"
+                            aria-label="Calendario de fecha de nacimiento" hidden></div>
+                    </div>
+                    <p class="form-hint form-hint-neutral" id="fecha-hint"></p>
+                </div>
+
+                <!-- SEXO (si agregas una opción value="otro", solo añade data-otro="registro-sexo-otro"
+                     y el input registro-sexo-otro, igual que en Género) -->
+
+                <div class="form-group">
+                    <label for="registro-sexo">Sexo</label>
+                    <select id="registro-sexo" name="sexo" required>
+                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="intersexual">Intersexual</option>
+                        <option value="prefiero_no_decirlo">Prefiero no decirlo</option>
+                    </select>
+                </div>
+
+                <!-- GÉNERO: al elegir "Otro" aparece un campo para escribir cuál -->
+
+                <div class="form-group">
+                    <label for="registro-genero">Género</label>
+                    <select id="registro-genero" name="genero" required data-otro="registro-genero-otro">
+                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="hombre">Hombre</option>
+                        <option value="mujer">Mujer</option>
+                        <option value="otro">Otro</option>
+                        <option value="prefiero_no_decirlo">Prefiero no decirlo</option>
+                    </select>
+                    <input type="text" id="registro-genero-otro" class="campo-otro"
+                        placeholder="¿Cuál?" maxlength="40" autocomplete="off" hidden>
+                </div>
+
+                <!-- TIPO DE DOCUMENTO: al elegir "Otro" aparece un campo para escribir cuál -->
+
+                <div class="form-group">
+                    <label for="registro-tipo-documento">Tipo de Documento</label>
+                    <select id="registro-tipo-documento" name="tipo_documento" required
+                        data-otro="registro-tipo-documento-otro">
+                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="cc">Cédula de Ciudadanía (CC)</option>
+                        <option value="ti">Tarjeta de Identidad (TI)</option>
+                        <option value="ce">Cédula de Extranjería (CE)</option>
+                        <option value="pasaporte">Pasaporte (PA)</option>
+                        <option value="ppt">Permiso de Protección Temporal (PPT)</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                    <input type="text" id="registro-tipo-documento-otro" class="campo-otro"
+                        placeholder="¿Cuál tipo de documento?" maxlength="40" autocomplete="off" hidden>
+                </div>
+
+                <div class="form-group">
+                    <label for="registro-numero-documento">Número de Documento</label>
+                    <input type="text" id="registro-numero-documento" name="numero_documento"
+                        placeholder="Número de documento" required inputmode="numeric" autocomplete="off"
+                        maxlength="20">
+                    <p class="form-hint form-hint-neutral" id="documento-hint"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="registro-telefono">Teléfono</label>
+                    <div class="phone-wrapper">
+
+                        <div class="phone-code-select" id="phone-code-select">
+                            <button type="button" class="phone-code-btn" id="phone-code-btn"
+                                aria-haspopup="listbox" aria-expanded="false">
+                                <img class="phone-flag" id="phone-flag-selected"
+                                    src="https://flagcdn.com/w40/co.png" alt="">
+                                <span id="phone-code-selected-label">+57</span>
+                                <svg class="phone-code-arrow" viewBox="0 0 24 24" width="12" height="12">
+                                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+
+                            <ul class="phone-code-list" id="phone-code-list" role="listbox" hidden>
+                                <!-- Las opciones se generan dinámicamente en login.js -->
+                            </ul>
+
+                            <input type="hidden" id="registro-telefono-codigo" name="codigo_pais" value="+57">
+                        </div>
+
+                        <input type="tel" id="registro-telefono" name="telefono" placeholder="300 123 4567" required
+                            autocomplete="tel" inputmode="numeric" maxlength="10">
+                    </div>
+                    <p class="form-hint form-hint-neutral" id="telefono-hint"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="registro-email">Correo Electrónico</label>
+                    <input type="email" id="registro-email" name="email" placeholder="tu@correo.com" required
+                        autocomplete="email" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="registro-password">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="registro-password" name="password" placeholder="Contraseña segura"
+                            required autocomplete="new-password">
+                        <button type="button" class="toggle-password" data-target="registro-password"
+                            aria-label="Mostrar contraseña">
+                            <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20">
+                                <path
+                                    d="M12 5C6.5 5 2.7 8.4 1 12c1.7 3.6 5.5 7 11 7s9.3-3.4 11-7c-1.7-3.6-5.5-7-11-7zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9zm0-7A2.5 2.5 0 1 0 12 14a2.5 2.5 0 0 0 0-5z"
+                                    fill="currentColor" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <div class="pw-meter" id="pw-meter" aria-live="polite">
+
+                        <div class="pw-lock" aria-hidden="true">
+                            <svg viewBox="0 -4 64 68" width="64" height="68">
+                                <g class="pw-shackle" id="pw-shackle">
+                                    <path d="M20 30 V20 a12 12 0 0 1 24 0 V30" />
+                                </g>
+                                <rect class="pw-body" x="10" y="28" width="44" height="32" rx="8" />
+                                <circle class="pw-keyhole" cx="32" cy="41" r="4.5" />
+                                <rect class="pw-keyhole" x="30" y="43" width="4" height="9" rx="2" />
+                            </svg>
+                        </div>
+
+                        <div class="pw-info">
+                            <div class="pw-row">
+                                <strong class="pw-label" id="pw-label">Sin contraseña</strong>
+                                <span id="pw-bits">0 bits</span>
+                            </div>
+                            <div class="pw-bar"><i class="pw-fill" id="pw-fill"></i></div>
+                            <p class="pw-msg" id="pw-msg">El candado está abierto.</p>
+                        </div>
+
+                        <ul class="pw-reqs">
+                            <li data-req="largo">8+ caracteres</li>
+                            <li data-req="mayus">Mayúscula</li>
+                            <li data-req="minus">Minúscula</li>
+                            <li data-req="numero">Número</li>
+                            <li data-req="simbolo">Símbolo</li>
+                        </ul>
+
+                    </div>
+
+                    <label for="registro-confirmar">Confirmar contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="registro-confirmar" name="confirmar" placeholder="Repite tu contraseña"
+                            required autocomplete="new-password">
+                        <button type="button" class="toggle-password" data-target="registro-confirmar"
+                            aria-label="Mostrar contraseña">
+                            <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20">
+                                <path
+                                    d="M12 5C6.5 5 2.7 8.4 1 12c1.7 3.6 5.5 7 11 7s9.3-3.4 11-7c-1.7-3.6-5.5-7-11-7zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9zm0-7A2.5 2.5 0 1 0 12 14a2.5 2.5 0 0 0 0-5z"
+                                    fill="currentColor" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group terminos-check">
+                    <label>
+                        <input type="checkbox" id="registro-terminos">
+                        <span>He leído y acepto los
+                            <a href="#" class="terminos-link" data-abrir-terminos>Términos y Condiciones</a>
+                            y la
+                            <a href="#" class="terminos-link" data-abrir-terminos="privacidad">Política de Privacidad</a>
+                            de TrueLock.</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary">Crear Cuenta</button>
+
+                <p class="auth-switch">
+                    ¿Ya tienes cuenta?
+                    <a href="#" class="nav-link" data-target="view-login">Inicia sesión</a>
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- VISTA: VERIFICAR CUENTA -->
+    <!-- ============================= -->
+
+    <div class="auth-view" id="view-verificacion">
+
+        <div class="auth-card">
+
+            <div class="auth-logo">
+                <img src="IMAGENES/logo.png" alt="TrueLock">
+            </div>
+
+            <h1 class="auth-title">Verifica tu cuenta</h1>
+            <p class="auth-subtitle" id="ver-subtitulo">Elige dónde quieres recibir tu código de verificación.</p>
+
+            <!-- PASO 1: elegir método -->
+
+            <div class="ver-paso active" id="ver-paso-metodo">
+
+                <div class="ver-metodos" role="radiogroup" aria-label="Método de verificación">
+
+                    <button type="button" class="ver-metodo seleccionado" data-metodo="email" role="radio"
+                        aria-checked="true">
+                        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                            <path d="M3 6h18v12H3z M3 7l9 7 9-7" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span class="ver-metodo-titulo">Correo</span>
+                        <span class="ver-metodo-destino" id="ver-destino-email"></span>
+                    </button>
+
+                    <button type="button" class="ver-metodo" data-metodo="telefono" role="radio"
+                        aria-checked="false">
+                        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                            <rect x="7" y="2.5" width="10" height="19" rx="2.5" fill="none" stroke="currentColor"
+                                stroke-width="1.8" />
+                            <path d="M11 18.5h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                        <span class="ver-metodo-titulo">Teléfono (SMS)</span>
+                        <span class="ver-metodo-destino" id="ver-destino-telefono"></span>
+                    </button>
+
+                </div>
+
+                <button type="button" class="btn-primary" id="ver-enviar">Enviar código</button>
+
+            </div>
+
+            <!-- PASO 2: escribir el código -->
+
+            <div class="ver-paso" id="ver-paso-codigo">
+
+                <div class="ver-stage" id="ver-stage">
+
+                    <svg class="ver-orbita" viewBox="0 0 200 200" aria-hidden="true">
+                        <circle cx="100" cy="100" r="68" />
+                    </svg>
+
+                    <span class="ver-hub" aria-hidden="true"></span>
+
+                    <div class="ver-slots" id="ver-slots">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="one-time-code" aria-label="Dígito 1">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="off" aria-label="Dígito 2">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="off" aria-label="Dígito 3">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="off" aria-label="Dígito 4">
+                    </div>
+
+                </div>
+
+                <p class="ver-estado" id="ver-estado" aria-live="polite"></p>
+
+                <p class="ver-reenviar" id="ver-reenviar">
+                    ¿No recibiste el código?
+                    <span id="ver-temporizador"></span>
+                    <button type="button" id="ver-btn-reenviar" disabled>Reenviar</button>
+                </p>
+
+                <div class="ver-acciones">
+                    <button type="button" id="ver-cambiar">Cambiar método</button>
+                </div>
+
+                <!-- Simulación de mensaje entrante (solo demo, quitar al conectar el backend) -->
+                <div class="ver-sms" id="ver-sms">
+                    <div class="ver-sms-texto">
+                        <small id="ver-sms-origen">Mensaje · Código</small>
+                        <span id="ver-sms-texto"></span>
+                    </div>
+                    <button type="button" id="ver-sms-rellenar">Rellenar</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOTÓN DE AYUDA -->
+
+    <button type="button" class="help-fab" id="help-fab" aria-label="Ayuda">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+            <path
+                d="M9.5 9a2.5 2.5 0 1 1 3.8 2.1c-.8.5-1.3 1-1.3 2.1M12 17h.01"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </button>
+
+    <!-- TOASTS -->
+    <div class="toast" id="toast"></div>
+
+    <script src="JS/login.js"></script>
+    <script src="JS/fuerza-contraseña.js"></script>
+    <script src="JS/verificacion.js"></script>
+    <script src="JS/fecha-nacimiento.js"></script>
+    <script src="JS/terminos.js"></script>
+    <script src="JS/institucion.js"></script>
+    <script src="JS/registro-extra.js"></script>
+</body>
+
+</html>

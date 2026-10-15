@@ -1,0 +1,105 @@
+    <!-- ============================= -->
+    <!-- VISTA: VERIFICAR CUENTA -->
+    <!-- Pegar en login.html justo DESPUÉS de la vista "view-registro" -->
+    <!-- ============================= -->
+
+    <div class="auth-view" id="view-verificacion">
+
+        <div class="auth-card">
+
+            <div class="auth-logo">
+                <svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="#ffffff" stroke-width="7" />
+                    <line x1="20" y1="80" x2="80" y2="20" stroke="#ffffff" stroke-width="7" stroke-linecap="round" />
+                    <text x="50" y="63" font-size="40" font-weight="700" fill="#ffffff" text-anchor="middle"
+                        font-family="Arial, Helvetica, sans-serif">TL</text>
+                </svg>
+            </div>
+
+            <h1 class="auth-title">Verifica tu cuenta</h1>
+            <p class="auth-subtitle" id="ver-subtitulo">Elige dónde quieres recibir tu código de verificación.</p>
+
+            <!-- PASO 1: elegir método -->
+
+            <div class="ver-paso active" id="ver-paso-metodo">
+
+                <div class="ver-metodos" role="radiogroup" aria-label="Método de verificación">
+
+                    <button type="button" class="ver-metodo seleccionado" data-metodo="email" role="radio"
+                        aria-checked="true">
+                        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                            <path d="M3 6h18v12H3z M3 7l9 7 9-7" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span class="ver-metodo-titulo">Correo</span>
+                        <span class="ver-metodo-destino" id="ver-destino-email"></span>
+                    </button>
+
+                    <button type="button" class="ver-metodo" data-metodo="telefono" role="radio"
+                        aria-checked="false">
+                        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                            <rect x="7" y="2.5" width="10" height="19" rx="2.5" fill="none" stroke="currentColor"
+                                stroke-width="1.8" />
+                            <path d="M11 18.5h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                        <span class="ver-metodo-titulo">Teléfono (SMS)</span>
+                        <span class="ver-metodo-destino" id="ver-destino-telefono"></span>
+                    </button>
+
+                </div>
+
+                <button type="button" class="btn-primary" id="ver-enviar">Enviar código</button>
+
+            </div>
+
+            <!-- PASO 2: escribir el código -->
+
+            <div class="ver-paso" id="ver-paso-codigo">
+
+                <div class="ver-stage" id="ver-stage">
+
+                    <svg class="ver-orbita" viewBox="0 0 200 200" aria-hidden="true">
+                        <circle cx="100" cy="100" r="68" />
+                    </svg>
+
+                    <span class="ver-hub" aria-hidden="true"></span>
+
+                    <div class="ver-slots" id="ver-slots">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="one-time-code" aria-label="Dígito 1">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="off" aria-label="Dígito 2">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="off" aria-label="Dígito 3">
+                        <input class="ver-slot" type="text" inputmode="numeric" maxlength="1"
+                            autocomplete="off" aria-label="Dígito 4">
+                    </div>
+
+                </div>
+
+                <p class="ver-estado" id="ver-estado" aria-live="polite"></p>
+
+                <p class="ver-reenviar" id="ver-reenviar">
+                    ¿No recibiste el código?
+                    <span id="ver-temporizador"></span>
+                    <button type="button" id="ver-btn-reenviar" disabled>Reenviar</button>
+                </p>
+
+                <div class="ver-acciones">
+                    <button type="button" id="ver-cambiar">Cambiar método</button>
+                </div>
+
+                <!-- Simulación de mensaje entrante (solo demo, quitar al conectar el backend) -->
+                <div class="ver-sms" id="ver-sms">
+                    <div class="ver-sms-texto">
+                        <small id="ver-sms-origen">Mensaje · Código</small>
+                        <span id="ver-sms-texto"></span>
+                    </div>
+                    <button type="button" id="ver-sms-rellenar">Rellenar</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>

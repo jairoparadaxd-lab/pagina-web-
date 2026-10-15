@@ -1,0 +1,225 @@
+/* ============================================================
+   MEDIDOR DE CONTRASEÑA CON CANDADO
+   Cargar DESPUÉS de login.css
+
+   Este archivo solo define forma, tamaño y transiciones.
+   Todos los colores y el movimiento del arco los pone el JS,
+   usando propiedades que existen en cualquier navegador.
+   ============================================================ */
+
+
+/* ============================= */
+/* TARJETA DEL MEDIDOR */
+/* ============================= */
+
+.pw-meter {
+    margin-top: 12px;
+    padding: 14px;
+
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    align-items: center;
+
+    background-color: rgba(22, 27, 34, 0.7);
+
+    border: 1px solid #21262d;
+    border-radius: 12px;
+
+    transition: border-color 0.5s ease;
+}
+
+
+/* ============================= */
+/* CANDADO */
+/* ============================= */
+
+.pw-lock svg {
+    display: block;
+
+    width: 64px;
+    height: 68px;
+
+    overflow: visible;
+
+    transition: filter 0.5s ease;
+}
+
+.pw-lock .pw-shackle {
+    fill: none;
+
+    stroke: #6e7681;
+    stroke-width: 5;
+    stroke-linecap: round;
+
+    transition: stroke 0.5s ease;
+}
+
+.pw-lock .pw-shackle path {
+    fill: none;
+}
+
+.pw-lock .pw-body {
+    fill: #6e7681;
+
+    transition: fill 0.5s ease;
+}
+
+.pw-lock .pw-keyhole {
+    fill: #0d1117;
+}
+
+
+/* ============================= */
+/* TEXTOS Y BARRA */
+/* ============================= */
+
+.pw-info {
+    min-width: 0;
+}
+
+.pw-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+
+    font-size: 12px;
+    color: #9ba1a6;
+}
+
+.pw-label {
+    font-size: 15px;
+    font-weight: 700;
+
+    color: #6e7681;
+
+    transition: color 0.5s ease;
+}
+
+.pw-bar {
+    position: relative;
+
+    height: 6px;
+    margin: 8px 0;
+
+    background-color: #21262d;
+    border-radius: 6px;
+
+    overflow: hidden;
+}
+
+.pw-fill {
+    display: block;
+
+    width: 0%;
+    height: 100%;
+
+    background-color: #6e7681;
+    border-radius: 6px;
+
+    transition:
+        width 0.45s ease,
+        background-color 0.5s ease;
+}
+
+/* Marcas en los límites de cada nivel */
+
+.pw-bar::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(#0d1117, #0d1117) 37% 0 / 2px 100% no-repeat,
+        linear-gradient(#0d1117, #0d1117) 66% 0 / 2px 100% no-repeat,
+        linear-gradient(#0d1117, #0d1117) 88% 0 / 2px 100% no-repeat;
+}
+
+.pw-msg {
+    font-size: 12px;
+    color: #9ba1a6;
+}
+
+
+/* ============================= */
+/* REQUISITOS */
+/* ============================= */
+
+.pw-reqs {
+    grid-column: 1 / -1;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    list-style: none;
+}
+
+.pw-reqs li {
+    padding: 3px 10px;
+
+    font-size: 11px;
+    color: #6e7681;
+
+    border: 1px solid #21262d;
+    border-radius: 20px;
+
+    transition:
+        color 0.3s ease,
+        border-color 0.3s ease,
+        background-color 0.3s ease;
+}
+
+.pw-reqs li.ok::before {
+    content: "✓ ";
+}
+
+
+/* ============================= */
+/* NIVEL MÁXIMO: pulso suave */
+/* ============================= */
+
+.pw-meter.maximo .pw-lock svg {
+    animation: pwPulso 2.2s ease-in-out infinite;
+}
+
+@keyframes pwPulso {
+
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .pw-meter.maximo .pw-lock svg {
+        animation: none;
+    }
+
+}
+
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+    .pw-meter {
+        grid-template-columns: 52px 1fr;
+        gap: 10px;
+    }
+
+    .pw-lock svg {
+        width: 52px;
+        height: 55px;
+    }
+
+}

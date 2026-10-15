@@ -1,0 +1,900 @@
+/* ============================= */
+/* CONFIGURACIÓN GENERAL */
+/* ============================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.login-body {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px 16px;
+
+    background-color: #0a0a0c;
+
+    background-image:
+        radial-gradient(circle at 0% 100%, rgba(225, 6, 0, 0.28), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(225, 6, 0, 0.16), transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(225, 6, 0, 0.22), transparent 55%),
+        radial-gradient(circle at 0% 0%, rgba(0, 0, 0, 0.6), transparent 45%);
+
+    color: #ffffff;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    line-height: 1.5;
+
+    position: relative;
+
+    overflow-x: hidden;
+}
+
+
+/* ============================= */
+/* VISTAS (LOGIN / RECUPERAR / REGISTRO) */
+/* ============================= */
+
+.auth-view {
+    display: none;
+
+    width: 100%;
+
+    justify-content: center;
+
+    animation: apareceVista 0.35s ease;
+}
+
+.auth-view.active {
+    display: flex;
+}
+
+@keyframes apareceVista {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ============================= */
+/* TARJETA */
+/* ============================= */
+
+.auth-card {
+    width: 100%;
+    max-width: 520px;
+
+    background-color: rgba(13, 17, 23, 0.88);
+
+    border: 1px solid #21262d;
+    border-radius: 18px;
+
+    padding: 45px 40px;
+
+    text-align: center;
+
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(8px);
+}
+
+
+/* ============================= */
+/* LOGO */
+/* ============================= */
+
+.auth-logo {
+    width: 82px;
+    height: 82px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 22px;
+
+    box-shadow: 0 12px 28px rgba(225, 6, 0, 0.4);
+}
+
+/* La imagen ocupa TODO el cuadro del logo */
+
+.auth-logo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: inherit;
+
+    display: block;
+}
+
+
+/* ============================= */
+/* TÍTULOS */
+/* ============================= */
+
+.auth-title {
+    font-size: 27px;
+    font-weight: 700;
+
+    color: #ffffff;
+
+    margin-bottom: 6px;
+}
+
+.auth-subtitle {
+    font-size: 14px;
+
+    color: #9ba1a6;
+
+    margin-bottom: 20px;
+}
+
+
+/* ============================= */
+/* INSIGNIA "PRO EDITION" */
+/* ============================= */
+
+.auth-badge {
+    display: inline-block;
+
+    padding: 5px 16px;
+
+    margin-bottom: 28px;
+
+    background-color: rgba(225, 6, 0, 0.15);
+
+    border: 1px solid rgba(225, 6, 0, 0.45);
+
+    color: #ff6b61;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    border-radius: 20px;
+}
+
+
+/* ============================= */
+/* ALERTA EN LÍNEA */
+/* ============================= */
+
+.auth-alert {
+    margin-bottom: 16px;
+
+    padding: 10px 12px;
+
+    background-color: rgba(225, 6, 0, 0.1);
+
+    border: 1px solid rgba(225, 6, 0, 0.4);
+    border-radius: 8px;
+
+    color: #ff6b61;
+
+    font-size: 12px;
+
+    text-align: left;
+}
+
+.auth-alert[hidden] {
+    display: none;
+}
+
+
+/* ============================= */
+/* PESTAÑAS CORREO / TELÉFONO */
+/* ============================= */
+
+.auth-tabs {
+    display: flex;
+
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid #21262d;
+}
+
+.auth-tab {
+    flex: 1;
+
+    padding: 11px 8px;
+    margin-bottom: -1px;
+
+    background: none;
+
+    border: none;
+    border-bottom: 2px solid transparent;
+
+    color: #9ba1a6;
+
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.auth-tab:hover {
+    color: #ffffff;
+}
+
+.auth-tab.activo {
+    background-color: rgba(225, 6, 0, 0.12);
+
+    border-bottom-color: #e10600;
+
+    color: #ff6b61;
+}
+
+/* Variante "píldora" (recuperar contraseña) */
+
+.auth-tabs-pill {
+    gap: 4px;
+
+    padding: 4px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 10px;
+}
+
+.auth-tabs-pill .auth-tab {
+    margin-bottom: 0;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    font-size: 13px;
+}
+
+.auth-tabs-pill .auth-tab.activo {
+    background-color: rgba(225, 6, 0, 0.18);
+
+    border-color: rgba(225, 6, 0, 0.45);
+}
+
+.auth-tab-panel[hidden] {
+    display: none;
+}
+
+
+/* ============================= */
+/* FORMULARIOS */
+/* ============================= */
+
+form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #c9d1d9;
+
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="tel"],
+select {
+    width: 100%;
+
+    padding: 13px 15px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-family: inherit;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+input[type="date"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+
+    cursor: pointer;
+
+    border-radius: 4px;
+
+    padding: 4px;
+
+    transition: background-color 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+input::placeholder {
+    color: #5a6169;
+}
+
+input:focus,
+select:focus {
+    border-color: #e10600;
+
+    background-color: #1a1f27;
+}
+
+select {
+    appearance: none;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpath fill='%239ba1a6' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+
+    padding-right: 40px;
+
+    cursor: pointer;
+}
+
+
+/* ============================= */
+/* CAMPO "OTRO, ¿CUÁL?" */
+/* (aparece debajo de un select al elegir "Otro") */
+/* ============================= */
+
+.campo-otro {
+    margin-top: 10px;
+
+    animation: apareceVista 0.25s ease;
+}
+
+.campo-otro[hidden] {
+    display: none;
+}
+
+
+/* ============================= */
+/* TELÉFONO CON PREFIJO DE PAÍS */
+/* ============================= */
+
+.phone-wrapper {
+    display: flex;
+
+    gap: 10px;
+}
+
+.phone-wrapper input[type="tel"] {
+    flex: 1;
+
+    min-width: 0;
+}
+
+/* Selector de código de país (reemplaza al <select> nativo
+   para poder mostrar la bandera de cada país de forma
+   confiable en todos los navegadores/SO) */
+
+.phone-code-select {
+    position: relative;
+
+    flex: 0 0 118px;
+    width: 118px;
+}
+
+.phone-code-btn {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 13px 10px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.phone-code-btn:hover,
+.phone-code-select.abierto .phone-code-btn {
+    border-color: #e10600;
+
+    background-color: #1a1f27;
+}
+
+.phone-flag {
+    width: 20px;
+    height: 14px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    border-radius: 2px;
+
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+#phone-code-selected-label,
+.phone-code-label {
+    flex: 1;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+.phone-code-arrow {
+    flex-shrink: 0;
+
+    color: #9ba1a6;
+
+    transition: transform 0.2s ease;
+}
+
+.phone-code-select.abierto .phone-code-arrow {
+    transform: rotate(180deg);
+}
+
+.phone-code-list {
+    position: absolute;
+
+    top: calc(100% + 6px);
+    left: 0;
+
+    width: 260px;
+    max-height: 260px;
+
+    overflow-y: auto;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 8px;
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+
+    list-style: none;
+
+    z-index: 40;
+}
+
+.phone-code-option {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 12px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: background-color 0.15s ease;
+}
+
+.phone-code-option:hover,
+.phone-code-option.resaltado {
+    background-color: #1a1f27;
+}
+
+.phone-code-option img {
+    width: 20px;
+    height: 14px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    border-radius: 2px;
+
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.phone-code-option .phone-code-option-pais {
+    flex: 1;
+
+    color: #ffffff;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.phone-code-option .phone-code-option-codigo {
+    color: #9ba1a6;
+}
+
+
+/* ============================= */
+/* CAMPO DE CONTRASEÑA CON OJO */
+/* ============================= */
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 46px;
+}
+
+.toggle-password {
+    position: absolute;
+
+    top: 50%;
+    right: 12px;
+
+    transform: translateY(-50%);
+
+    background: none;
+    border: none;
+
+    color: #9ba1a6;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4px;
+
+    transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+    color: #ffffff;
+}
+
+
+/* ============================= */
+/* TEXTO DE AYUDA (HINT) */
+/* ============================= */
+
+.form-hint {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 8px;
+
+    font-size: 12px;
+
+    color: #3fb950;
+}
+
+.form-hint-neutral {
+    color: #6e7681;
+}
+
+.form-group.campo-invalido input,
+.form-group.campo-invalido select {
+    border-color: #e10600;
+}
+
+
+/* ============================= */
+/* ENLACE "¿OLVIDASTE TU CONTRASEÑA?" */
+/* ============================= */
+
+.form-row-link {
+    text-align: right;
+
+    margin: -6px 0 22px;
+}
+
+.form-row-link a {
+    font-size: 13px;
+}
+
+
+/* ============================= */
+/* ENLACES DE NAVEGACIÓN */
+/* ============================= */
+
+.nav-link,
+.auth-switch a {
+    color: #ff453a;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.auth-switch a:hover {
+    color: #ff8078;
+
+    text-decoration: underline;
+}
+
+
+/* ============================= */
+/* BOTÓN PRINCIPAL */
+/* ============================= */
+
+.btn-primary {
+    width: 100%;
+
+    padding: 14px;
+
+    background: linear-gradient(180deg, #e10600, #b40500);
+
+    border: none;
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(180deg, #ff3b30, #e10600);
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 10px 25px rgba(225, 6, 0, 0.35);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+
+/* ============================= */
+/* TEXTO DE CAMBIO DE VISTA */
+/* ============================= */
+
+.auth-switch {
+    margin-top: 22px;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    color: #9ba1a6;
+}
+
+
+/* ============================= */
+/* ENLACE "VOLVER" (RECUPERAR) */
+/* ============================= */
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 26px;
+
+    color: #9ba1a6 !important;
+
+    font-size: 14px;
+    font-weight: 500 !important;
+
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: #ffffff !important;
+
+    text-decoration: none !important;
+}
+
+
+/* ============================= */
+/* PIE DE LA TARJETA DE LOGIN */
+/* ============================= */
+
+.auth-footer-tags {
+    margin-top: 28px;
+    padding-top: 20px;
+
+    border-top: 1px solid #21262d;
+
+    font-size: 12px;
+
+    color: #6e7681;
+
+    text-align: center;
+}
+
+
+/* ============================= */
+/* BOTÓN FLOTANTE DE AYUDA */
+/* ============================= */
+
+.help-fab {
+    position: fixed;
+
+    bottom: 24px;
+    right: 24px;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 50%;
+
+    color: #9ba1a6;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.help-fab:hover {
+    background-color: #1a1f27;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+
+/* ============================= */
+/* TOAST DE NOTIFICACIÓN */
+/* ============================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 30px;
+
+    transform: translate(-50%, 20px);
+
+    padding: 13px 22px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-left: 4px solid #e10600;
+
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    z-index: 2000;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.toast.mostrar {
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+}
+
+
+/* ============================= */
+/* RESPONSIVE - CELULARES */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+    .auth-card {
+        padding: 34px 24px;
+
+        border-radius: 14px;
+    }
+
+    .auth-logo {
+        width: 70px;
+        height: 70px;
+
+        border-radius: 18px;
+    }
+
+    .auth-title {
+        font-size: 23px;
+    }
+
+    .help-fab {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    .phone-code-select {
+        flex: 0 0 100px;
+        width: 100px;
+    }
+
+    .phone-code-btn {
+        padding: 13px 8px;
+
+        font-size: 12px;
+    }
+
+    .phone-code-list {
+        width: 230px;
+    }
+
+}

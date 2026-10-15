@@ -1,0 +1,531 @@
+/* ============================= */
+/* VERIFICACIÓN DE CUENTA (OTP)  */
+/* ============================= */
+
+/* ---------- Fondo animado de la verificación ---------- */
+/* Girando: amarillo → celeste → rojo → morado (en bucle)    */
+/* Código correcto: transición a verde                       */
+
+@property --ver-c1 {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #f5b800;
+}
+
+@property --ver-c2 {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #e10600;
+}
+
+@keyframes verCicloColor1 {
+    0%, 100% { --ver-c1: #f5b800; }  /* amarillo */
+    25%      { --ver-c1: #22c8ff; }  /* azul celeste */
+    50%      { --ver-c1: #e10600; }  /* rojo */
+    75%      { --ver-c1: #7b2ff7; }  /* morado */
+}
+
+@keyframes verCicloColor2 {
+    0%, 100% { --ver-c2: #e10600; }  /* rojo */
+    25%      { --ver-c2: #7b2ff7; }  /* morado */
+    50%      { --ver-c2: #f5b800; }  /* amarillo */
+    75%      { --ver-c2: #22c8ff; }  /* azul celeste */
+}
+
+/* Capa de colores cambiantes (solo visible mientras giran los cuadros) */
+
+.login-body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+    pointer-events: none;
+
+    background-image:
+        radial-gradient(circle at 0% 100%, var(--ver-c1), transparent 55%),
+        radial-gradient(circle at 100% 0%, var(--ver-c2), transparent 55%),
+        radial-gradient(circle at 100% 100%, var(--ver-c1), transparent 50%),
+        radial-gradient(circle at 0% 0%, var(--ver-c2), transparent 45%);
+
+    opacity: 0;
+
+    transition: opacity 0.6s ease;
+}
+
+.login-body:has(.ver-stage.girando)::before {
+    opacity: 0.6;
+
+    /* 2.8 s por ciclo: se alcanzan a ver los 4 colores durante el giro */
+    animation:
+        verCicloColor1 2.8s linear infinite,
+        verCicloColor2 2.8s linear infinite;
+}
+
+/* Capa verde (aparece cuando el código es correcto) */
+
+.login-body::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+    pointer-events: none;
+
+    background-image:
+        radial-gradient(circle at 0% 100%, #1fa84f, transparent 55%),
+        radial-gradient(circle at 100% 0%, #3fb950, transparent 55%),
+        radial-gradient(circle at 100% 100%, #1fa84f, transparent 50%),
+        radial-gradient(circle at 0% 0%, #3fb950, transparent 45%);
+
+    opacity: 0;
+
+    transition: opacity 0.7s ease;
+}
+
+/* Debe ir DESPUÉS de la regla de "girando" para que gane */
+
+.login-body:has(.ver-stage.ok)::before {
+    opacity: 0;
+}
+
+.login-body:has(.ver-stage.ok)::after {
+    opacity: 0.6;
+}
+
+/* ---------- Pasos internos de la tarjeta ---------- */
+
+.ver-paso {
+    display: none;
+}
+
+.ver-paso.active {
+    display: block;
+
+    animation: apareceVista 0.35s ease;
+}
+
+
+/* ---------- Elección de método (correo / teléfono) ---------- */
+
+.ver-metodos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 22px;
+}
+
+.ver-metodo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 20px 12px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 12px;
+
+    color: #c9d1d9;
+
+    font-family: inherit;
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.ver-metodo:hover {
+    background-color: #1a1f27;
+
+    transform: translateY(-2px);
+}
+
+.ver-metodo svg {
+    color: #9ba1a6;
+
+    transition: color 0.2s ease;
+}
+
+.ver-metodo-titulo {
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #ffffff;
+}
+
+.ver-metodo-destino {
+    font-size: 12px;
+
+    color: #9ba1a6;
+
+    word-break: break-all;
+}
+
+.ver-metodo.seleccionado {
+    border-color: #e10600;
+
+    background-color: #1a1f27;
+
+    box-shadow: 0 0 0 1px #e10600, 0 10px 25px rgba(225, 6, 0, 0.25);
+}
+
+.ver-metodo.seleccionado svg {
+    color: #ff453a;
+}
+
+.ver-metodo:focus-visible,
+.ver-slot:focus-visible {
+    outline: 2px solid #ff453a;
+    outline-offset: 2px;
+}
+
+
+/* ---------- Escenario de los 4 cuadros ---------- */
+
+.ver-stage {
+    position: relative;
+
+    height: 200px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 6px;
+}
+
+.ver-orbita {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 200px;
+    height: 200px;
+
+    transform: translate(-50%, -50%);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: opacity 0.4s ease;
+}
+
+.ver-orbita circle {
+    fill: none;
+
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 1.5;
+    stroke-dasharray: 2 8;
+    stroke-linecap: round;
+}
+
+.ver-stage.girando .ver-orbita {
+    opacity: 1;
+}
+
+.ver-hub {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 12px;
+    height: 12px;
+
+    margin: -6px 0 0 -6px;
+
+    border-radius: 50%;
+
+    background-color: #ffffff;
+
+    opacity: 0;
+
+    transform: scale(0);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.ver-stage.girando .ver-hub {
+    opacity: 0.9;
+
+    transform: scale(1);
+}
+
+.ver-stage.ok .ver-hub {
+    background-color: #3fb950;
+
+    transform: scale(2.2);
+
+    box-shadow: 0 0 30px 8px rgba(63, 185, 80, 0.55);
+}
+
+.ver-slots {
+    display: flex;
+
+    gap: 12px;
+}
+
+.ver-slot {
+    width: 54px;
+    height: 64px;
+
+    padding: 0;
+
+    background-color: #161b22;
+
+    border: 1px solid #2d333b;
+    border-radius: 12px;
+
+    color: #ffffff;
+
+    font-size: 26px;
+    font-weight: 700;
+    font-family: inherit;
+    text-align: center;
+
+    outline: none;
+
+    caret-color: #ff453a;
+
+    will-change: transform;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.ver-slot:focus {
+    border-color: #e10600;
+
+    background-color: #1a1f27;
+
+    box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.25);
+}
+
+.ver-slot.lleno {
+    border-color: #444c56;
+}
+
+.ver-stage.error .ver-slot {
+    border-color: #e10600;
+
+    animation: verSacudir 0.45s ease;
+}
+
+.ver-stage.ok .ver-slot {
+    border-color: #3fb950;
+}
+
+@keyframes verSacudir {
+
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-7px); }
+    40%      { transform: translateX(7px); }
+    60%      { transform: translateX(-5px); }
+    80%      { transform: translateX(5px); }
+
+}
+
+
+/* ---------- Textos de estado ---------- */
+
+.ver-estado {
+    min-height: 20px;
+
+    margin-bottom: 14px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #9ba1a6;
+}
+
+.ver-estado.error {
+    color: #ff6b61;
+}
+
+.ver-estado.ok {
+    color: #3fb950;
+
+    font-weight: 600;
+}
+
+.ver-reenviar {
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #9ba1a6;
+}
+
+.ver-reenviar button {
+    background: none;
+    border: none;
+
+    color: #ff453a;
+
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+}
+
+.ver-reenviar button:hover {
+    color: #ff8078;
+
+    text-decoration: underline;
+}
+
+.ver-reenviar button:disabled {
+    color: #6e7681;
+
+    cursor: default;
+
+    text-decoration: none;
+}
+
+.ver-acciones {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 18px;
+
+    margin-top: 16px;
+
+    font-size: 13px;
+}
+
+.ver-acciones button {
+    background: none;
+    border: none;
+
+    color: #9ba1a6;
+
+    font-size: 13px;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.ver-acciones button:hover {
+    color: #ffffff;
+}
+
+
+/* ---------- Notificación simulada (solo demo, sin backend) ---------- */
+
+.ver-sms {
+    display: none;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 20px;
+    padding: 10px 12px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 12px;
+
+    text-align: left;
+}
+
+.ver-sms.visible {
+    display: flex;
+
+    animation: apareceVista 0.4s ease;
+}
+
+.ver-sms-texto {
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 12px;
+
+    color: #c9d1d9;
+}
+
+.ver-sms-texto small {
+    display: block;
+
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    color: #6e7681;
+}
+
+.ver-sms button {
+    padding: 7px 14px;
+
+    background-color: #ffffff;
+
+    border: none;
+    border-radius: 16px;
+
+    color: #0a0a0c;
+
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+
+    cursor: pointer;
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 600px) {
+
+    .ver-metodos {
+        grid-template-columns: 1fr;
+    }
+
+    .ver-slot {
+        width: 48px;
+        height: 58px;
+
+        font-size: 22px;
+    }
+
+    .ver-slots {
+        gap: 9px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .login-body::before {
+        animation: none;
+    }
+
+}

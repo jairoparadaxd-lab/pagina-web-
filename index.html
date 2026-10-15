@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="TRUE LOCK - Sistema de control y productividad desarrollado por aprendices."
+    >
+
+    <title>TRUE LOCK | Control y productividad</title>
+
+
+    <!-- Icono de la pestaña -->
+
+    <link
+        rel="icon"
+        type="image/jpeg"
+        href="IMAGENES/logo.png"
+    >
+
+
+    <!-- CSS PRINCIPAL (único, fusionado) -->
+
+    <link
+        rel="stylesheet"
+        href="CSS/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ============================= -->
+    <!-- MÚSICA DE FONDO (ya no se reinicia al cambiar de pestaña) -->
+    <!-- ============================= -->
+
+    <audio
+        id="musica-fondo"
+        loop>
+
+        <source
+            src="MUSICA/musica fondo.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <!-- ============================= -->
+    <!-- ENCABEZADO -->
+    <!-- ============================= -->
+
+    <header>
+
+        <div class="header-contenido">
+
+
+            <!-- LOGO -->
+
+            <a
+                href="#inicio"
+                class="logo"
+                data-pagina="inicio">
+
+                <img
+                    src="IMAGENES/logo.png"
+                    alt="Logo de TRUE LOCK">
+
+            </a>
+
+
+            <!-- ============================= -->
+            <!-- MENÚ PRINCIPAL -->
+            <!-- ============================= -->
+
+            <nav id="menu">
+
+                <div class="anillo-neon" id="anillo-neon"></div>
+
+                <ul>
+
+                    <li>
+                        <a
+                            href="#inicio"
+                            data-pagina="inicio"
+                            data-color="rojo"
+                            data-i18n="nav-inicio">
+                            Inicio
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#mision"
+                            data-pagina="mision"
+                            data-color="azul"
+                            data-i18n="nav-mision">
+                            Misión
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#vision"
+                            data-pagina="vision"
+                            data-color="morado"
+                            data-i18n="nav-vision">
+                            Visión
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#actualizaciones"
+                            data-pagina="actualizaciones"
+                            data-color="amarillo"
+                            data-i18n="nav-actualizaciones">
+                            Actualizaciones
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#descargar"
+                            data-pagina="descargar"
+                            data-color="rojo"
+                            data-i18n="nav-descargar">
+                            Descargar
+                        </a>
+                    </li>
+
+                </ul>
+
+            </nav>
+
+
+            <!-- ============================= -->
+            <!-- CONTROLES DEL NAVBAR -->
+            <!-- ============================= -->
+
+            <div class="header-controles">
+
+                <!-- ============================= -->
+                <!-- SWITCH DE TEMA ANIMADO (sol/luna + muñequito que cae en el agujero) -->
+                <!-- ============================= -->
+
+                <button
+                    type="button"
+                    id="boton-tema"
+                    class="switch-tema"
+                    aria-label="Cambiar modo de color">
+
+                    <span class="switch-tema-pista">
+
+                        <span class="switch-tema-perilla">
+
+                            <svg
+                                class="switch-tema-icono switch-tema-icono-sol"
+                                viewBox="0 0 24 24"
+                                width="13"
+                                height="13"
+                                aria-hidden="true">
+
+                                <circle cx="12" cy="12" r="4.2" fill="#ffb020"/>
+
+                                <g
+                                    stroke="#ffb020"
+                                    stroke-width="2"
+                                    stroke-linecap="round">
+                                    <line x1="12" y1="1.5" x2="12" y2="4.3"/>
+                                    <line x1="12" y1="19.7" x2="12" y2="22.5"/>
+                                    <line x1="1.5" y1="12" x2="4.3" y2="12"/>
+                                    <line x1="19.7" y1="12" x2="22.5" y2="12"/>
+                                    <line x1="4.4" y1="4.4" x2="6.4" y2="6.4"/>
+                                    <line x1="17.6" y1="17.6" x2="19.6" y2="19.6"/>
+                                    <line x1="4.4" y1="19.6" x2="6.4" y2="17.6"/>
+                                    <line x1="17.6" y1="6.4" x2="19.6" y2="4.4"/>
+                                </g>
+
+                            </svg>
+
+                            <svg
+                                class="switch-tema-icono switch-tema-icono-luna"
+                                viewBox="0 0 24 24"
+                                width="13"
+                                height="13"
+                                aria-hidden="true">
+
+                                <path
+                                    d="M20.8 14.6A8.6 8.6 0 1 1 9.4 3.2a7 7 0 0 0 11.4 11.4Z"
+                                    fill="#6fb7ff"/>
+
+                            </svg>
+
+                        </span>
+
+                        <span class="switch-tema-hueco"></span>
+
+                        <canvas
+                            id="switch-tema-canvas"
+                            class="switch-tema-canvas">
+                        </canvas>
+
+                    </span>
+
+                    <span
+                        class="btn-label switch-tema-etiqueta"
+                        data-i18n="btn-modo-oscuro">
+                        Modo oscuro
+                    </span>
+
+                </button>
+
+
+                <!-- ============================= -->
+                <!-- BOTÓN DE MÚSICA (altavoz SVG con ondas y animación al silenciar) -->
+                <!-- ============================= -->
+
+                <button
+                    type="button"
+                    id="boton-musica"
+                    aria-label="Activar o desactivar música">
+
+                    <span class="icono-musica">
+
+                        <svg
+                            class="icono-musica-svg"
+                            viewBox="0 0 24 24"
+                            width="16"
+                            height="16"
+                            aria-hidden="true">
+
+                            <path
+                                class="altavoz-cuerpo"
+                                d="M3.5 9.5v5h3.6l5.2 4.3V5.2l-5.2 4.3H3.5Z"
+                                fill="currentColor"/>
+
+                            <path
+                                class="onda onda-1"
+                                d="M15.8 9.2a4 4 0 0 1 0 5.6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"/>
+
+                            <path
+                                class="onda onda-2"
+                                d="M18.2 6.8a7.4 7.4 0 0 1 0 10.4"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"/>
+
+                            <path
+                                class="linea-mute"
+                                d="M15 8 L21 16"
+                                stroke="#ff3b30"
+                                stroke-width="1.8"
+                                stroke-linecap="round"/>
+
+                        </svg>
+
+                    </span>
+
+                    <span
+                        class="btn-label"
+                        data-i18n="btn-musica-off">
+                        Música desactivada
+                    </span>
+
+                </button>
+
+
+                <!-- ============================= -->
+                <!-- BOTÓN DE IDIOMA (icono propio en vez del emoji 🌐) -->
+                <!-- ============================= -->
+
+                <button
+                    type="button"
+                    id="boton-idioma"
+                    aria-label="Cambiar idioma">
+
+                    <svg
+                        class="icono-idioma"
+                        viewBox="0 0 24 24"
+                        width="15"
+                        height="15"
+                        aria-hidden="true">
+
+                        <circle
+                            cx="12" cy="12" r="9"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.6"/>
+
+                        <path
+                            d="M3 12h18"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.4"/>
+
+                        <path
+                            d="M12 3c2.4 2.6 3.7 5.8 3.7 9s-1.3 6.4-3.7 9c-2.4-2.6-3.7-5.8-3.7-9s1.3-6.4 3.7-9Z"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.4"/>
+
+                    </svg>
+
+                    <span class="btn-label">English</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- BOTÓN CUENTA (login sigue siendo una página aparte) -->
+            <!-- ============================= -->
+
+            <a
+                href="login.html"
+                id="boton-cuenta"
+                data-i18n="nav-registro">
+                Registrarse
+            </a>
+
+
+            <!-- ============================= -->
+            <!-- MENÚ HAMBURGUESA -->
+            <!-- ============================= -->
+
+            <button
+                type="button"
+                class="menu_Togger"
+                id="menu_Togger"
+                aria-label="Abrir menú">
+
+                <span class="line"></span>
+                <span class="line"></span>
+                <span class="line"></span>
+
+            </button>
+
+
+        </div>
+
+
+        <div
+            class="fondo-menu"
+            id="fondo-menu">
+        </div>
+
+    </header>
+
+
+    <!-- ============================= -->
+    <!-- CONTENIDO PRINCIPAL: TODAS LAS "PÁGINAS" -->
+    <!-- Solo una tiene la clase .pagina-activa a la vez -->
+    <!-- ============================= -->
+
+    <main>
+
+
+        <!-- ============================= -->
+        <!-- INICIO -->
+        <!-- ============================= -->
+
+        <section id="pagina-inicio" class="pagina pagina-activa">
+
+            <div id="inicio">
+
+                <h1>TRUE LOCK</h1>
+
+                <h2 data-i18n="inicio-h2">
+                    Controla tu entorno. Enfócate en lo importante.
+                </h2>
+
+                <p data-i18n="inicio-p">
+                    Bienvenido al sitio oficial de TRUE LOCK, un proyecto
+                    desarrollado por aprendices con el propósito de ayudar
+                    a mejorar la concentración, la productividad y el control
+                    sobre las distracciones digitales.
+                </p>
+
+                <a
+                    href="#mision"
+                    data-pagina="mision"
+                    data-i18n="inicio-btn1">
+                    Conocer TRUE LOCK
+                </a>
+
+                <a
+                    href="#descargar"
+                    data-pagina="descargar"
+                    data-i18n="inicio-btn2">
+                    Descargar
+                </a>
+
+            </div>
+
+
+            <div id="nosotros">
+
+                <h2 data-i18n="nosotros-h2">¿Quiénes somos?</h2>
+
+                <p data-i18n="nosotros-p1">
+                    Somos un grupo de aprendices de una de las instituciones
+                    más reconocidas a nivel nacional en el desarrollo de software,
+                    enfocados en la creación de soluciones tecnológicas para
+                    problemas presentes en nuestro entorno. Así nace T.S Solutions.
+                </p>
+
+                <p data-i18n="nosotros-p2">
+                    TRUE LOCK nace como uno de nuestros proyectos insignia.
+                </p>
+
+                <p data-i18n="nosotros-p3">
+                    Nace con el fin de velar por una necesidad presente en un
+                    entorno digital tan amplio como el actual: la posibilidad de
+                    poner un límite o restricción a las herramientas del ámbito
+                    laboral y educativo, eliminando páginas y programas inútiles
+                    para dichos ámbitos, como la IA, juegos, redes sociales, etc.
+                </p>
+
+                <div class="nosotros-imagenes">
+
+                    <figure>
+                        <img
+                            src="IMAGENES/bloqueado_1.jpg"
+                            alt="Sitio web bloqueado por TRUE LOCK"
+                            loading="lazy">
+                    </figure>
+
+                    <figure>
+                        <img
+                            src="IMAGENES/bloqueado_2.jpg"
+                            alt="Acceso denegado por política de TRUE LOCK"
+                            loading="lazy">
+                    </figure>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ============================= -->
+        <!-- MISIÓN -->
+        <!-- ============================= -->
+
+        <section id="pagina-mision" class="pagina">
+
+            <div class="mision-contenido">
+
+                <div class="mision-texto">
+
+                    <h1 data-i18n="mision-h2">Misión</h1>
+
+                    <div class="linea-decorativa"></div>
+
+                    <p data-i18n="mision-p">
+                        Desarrollar soluciones tecnológicas que ayuden
+                        a las personas y organizaciones a controlar las
+                        distracciones digitales, mejorar su concentración
+                        y aprovechar de una manera más eficiente las
+                        herramientas tecnológicas en entornos educativos
+                        y laborales.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ============================= -->
+        <!-- VISIÓN -->
+        <!-- ============================= -->
+
+        <section id="pagina-vision" class="pagina">
+
+            <div class="vision-contenido">
+
+                <div class="vision-texto">
+
+                    <h1 data-i18n="vision-h2">Visión</h1>
+
+                    <div class="linea-decorativa"></div>
+
+                    <p id="vision-p">
+                        Ser reconocidos en
+                        <strong>2030</strong>
+                        como el software ejecutable líder en gestión
+                        de productividad digital y control de accesos web
+                        para el sector educativo y empresarial en el país,
+                        destacándonos por nuestra seguridad, adaptabilidad
+                        y por transformar entornos hiperconectados en
+                        espacios de máxima concentración y eficiencia.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ============================= -->
+        <!-- ACTUALIZACIONES -->
+        <!-- ============================= -->
+
+        <section id="pagina-actualizaciones" class="pagina">
+
+            <div class="actualizaciones-contenido">
+
+                <div class="actualizaciones-texto">
+
+                    <h1><span data-i18n="actualizaciones-titulo">Actualizaciones</span></h1>
+
+                    <div class="linea-decorativa"></div>
+
+                    <p data-i18n="actualizaciones-subtitulo">
+                        Conoce las versiones disponibles de TRUE LOCK.
+                    </p>
+
+                </div>
+
+                <article class="version-card">
+
+                    <div class="version-informacion">
+
+                        <span class="version-etiqueta" data-i18n="beta">Beta</span>
+
+                        <h2 data-i18n="actualizaciones-version">V1.0</h2>
+
+                        <p data-i18n="actualizaciones-descripcion">
+                            El inicio de todo, una versión más con varias
+                            funciones, como el bloqueo, la creación de roles
+                            y el manejo de las páginas web.
+                        </p>
+
+                    </div>
+
+                    <div class="version-accion">
+
+                        <a
+                            href="#descargar"
+                            data-pagina="descargar"
+                            class="boton-descarga-version"
+                            data-i18n="actualizaciones-boton">
+                            Descargar V1.0
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ============================= -->
+        <!-- DESCARGAR -->
+        <!-- ============================= -->
+
+        <section id="pagina-descargar" class="pagina">
+
+            <div class="descargar-contenido">
+
+                <div class="descargar-titulo">
+
+                    <h1 data-i18n="descargar-h2">Descargar TRUE LOCK</h1>
+
+                    <div class="linea-decorativa linea-centrada"></div>
+
+                </div>
+
+
+                <div class="version-descarga">
+
+                    <div class="version-datos">
+
+                        <span class="version-etiqueta" data-i18n="beta">Beta</span>
+
+                        <h2>V1.0</h2>
+
+                    </div>
+
+                    <a
+                        href="#"
+                        id="boton-descarga"
+                        class="boton-descarga"
+                        data-i18n="descargar-btn">
+                        Descargar TRUE LOCK
+                    </a>
+
+                </div>
+
+
+                <div class="planes">
+
+                    <div class="planes-titulo">
+                        <h2>Planes</h2>
+                        <p>
+                            Elige el plan de acuerdo con la cantidad de computadores
+                            que necesites administrar.
+                        </p>
+                    </div>
+
+                    <div class="planes-grid">
+
+                        <article class="plan-card plan-gratis">
+                            <div class="plan-cabecera">
+                                <h3>Plan Gratis</h3>
+                                <span class="plan-precio">Gratis</span>
+                            </div>
+                            <div class="plan-dato">
+                                <span>Computadores</span>
+                                <strong>10</strong>
+                            </div>
+                            <div class="plan-dato">
+                                <span>Duración</span>
+                                <strong>1 mes</strong>
+                            </div>
+                        </article>
+
+                        <article class="plan-card">
+                            <div class="plan-cabecera">
+                                <h3>Plan Plus</h3>
+                                <span class="plan-precio">Próximamente</span>
+                            </div>
+                            <div class="plan-dato">
+                                <span>Computadores</span>
+                                <strong>250</strong>
+                            </div>
+                        </article>
+
+                        <article class="plan-card">
+                            <div class="plan-cabecera">
+                                <h3>Plan Pro</h3>
+                                <span class="plan-precio">Próximamente</span>
+                            </div>
+                            <div class="plan-dato">
+                                <span>Computadores</span>
+                                <strong>500</strong>
+                            </div>
+                        </article>
+
+                        <article class="plan-card">
+                            <div class="plan-cabecera">
+                                <h3>Plan Ultra</h3>
+                                <span class="plan-precio">Próximamente</span>
+                            </div>
+                            <div class="plan-dato">
+                                <span>Computadores</span>
+                                <strong>750</strong>
+                            </div>
+                        </article>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- ============================= -->
+    <!-- PIE DE PÁGINA (una sola vez, ya no se repite) -->
+    <!-- ============================= -->
+
+    <footer>
+
+        <div class="social-fila">
+
+            <a
+                href="https://www.youtube.com/channel/UCqjJOPFO6KGAOk6qaeVD2_g"
+                target="_blank"
+                rel="noopener"
+                class="social-boton social-youtube"
+                aria-label="YouTube de TRUE LOCK">
+
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.5V8.5L15.8 12l-6.2 3.5Z"/>
+                </svg>
+
+                <span>YouTube</span>
+
+            </a>
+
+            <a
+                href="https://github.com/T-Solutions-TrueLock"
+                target="_blank"
+                rel="noopener"
+                class="social-boton social-github"
+                aria-label="GitHub de TRUE LOCK">
+
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11 11 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/>
+                </svg>
+
+                <span>GitHub</span>
+
+            </a>
+
+        </div>
+
+        <p id="copyright">
+            &copy; 2026 T.S SOLUTIONS.
+            Todos los derechos reservados.
+        </p>
+
+        <p data-i18n="footer-p2">
+            Proyecto desarrollado por aprendices.
+        </p>
+
+    </footer>
+
+
+    <!-- ============================= -->
+    <!-- MASCOTA SUPERPUESTA (fija en toda la página, arrastrable) -->
+    <!-- El segundo video (mascota_nueva) solo se ve mientras se agarra -->
+    <!-- ============================= -->
+
+    <div class="mascota" id="mascota">
+
+        <video class="mascota-normal" autoplay loop muted playsinline>
+            <source src="VIDEOS/mascota.webm" type="video/webm">
+            Tu navegador no soporta videos WebM.
+        </video>
+
+        <video class="mascota-agarrada" autoplay loop muted playsinline preload="auto">
+            <source src="VIDEOS/mascota_nueva.webm" type="video/webm">
+        </video>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- JAVASCRIPT ÚNICO, FUSIONADO -->
+    <!-- ============================= -->
+
+    <script src="JS/script.js"></script>
+
+
+    <!-- ============================= -->
+    <!-- JAVASCRIPT DE LA MASCOTA (si lo tienes, déjalo igual) -->
+    <!-- ============================= -->
+
+    <script src="JS/mascota.js"></script>
+
+
+</body>
+
+</html>
