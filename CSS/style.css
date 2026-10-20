@@ -266,11 +266,8 @@ nav a.activo {
 .switch-tema {
     position: relative;
 
-    /* antes estaba en "visible": el glow azul de la perilla en modo
-       oscuro se salía del botón y se veía como un halo roto/recortado
-       de forma asimétrica contra las esquinas redondeadas. Se deja
-       "hidden" para que el glow quede contenido dentro del propio
-       recuadro del botón. */
+    /* "hidden" para que el glow azul de la perilla en modo oscuro
+       quede contenido dentro del propio recuadro del botón. */
     overflow: hidden;
 
     padding: 6px 10px 6px 6px !important;
@@ -367,9 +364,7 @@ nav a.activo {
     z-index: 2;
 }
 
-/* estado: modo oscuro activo (la perilla se recolorea, igual que en el video).
-   Glow reducido y contenido por el "overflow: hidden" del botón, para que
-   ya no se vea como un halo desbordado y descuadrado. */
+/* estado: modo oscuro activo (la perilla se recolorea, igual que en el video). */
 .switch-tema.tema-oscuro .switch-tema-perilla {
     background-color: #0d1117;
     box-shadow:
@@ -1962,13 +1957,509 @@ body.modo-claro footer p {
 }
 
 
+/* ============================================================ */
+/* COLOR DE ACENTO POR PÁGINA                                   */
+/* Misión = azul celeste · Visión = morado · Actualizaciones =  */
+/* amarillo · Inicio y Descargar = rojo                         */
+/* ============================================================ */
+
+/* variables registradas como color: así el cambio se anima suave */
+@property --acento       { syntax: '<color>'; inherits: true; initial-value: #e10600; }
+@property --acento-hover { syntax: '<color>'; inherits: true; initial-value: #ff3b30; }
+@property --acento-txt   { syntax: '<color>'; inherits: true; initial-value: #ff5a52; }
+@property --on-acento    { syntax: '<color>'; inherits: true; initial-value: #ffffff; }
+
+:root {
+    --neon-azul: #29a9ff; /* azul celeste (también el del anillo) */
+}
+
+/* ----- paleta (tema oscuro) ----- */
+body,
+body[data-acento="rojo"] {
+    --acento: #e10600;
+    --acento-hover: #ff3b30;
+    --acento-txt: #ff5a52;
+    --on-acento: #ffffff;
+}
+
+body[data-acento="azul"] {
+    --acento: #29a9ff;
+    --acento-hover: #5cc0ff;
+    --acento-txt: #6cc6ff;
+    --on-acento: #04121f;
+}
+
+body[data-acento="morado"] {
+    --acento: #a742ff;
+    --acento-hover: #bd6bff;
+    --acento-txt: #c68bff;
+    --on-acento: #ffffff;
+}
+
+body[data-acento="amarillo"] {
+    --acento: #ffd12b;
+    --acento-hover: #ffe066;
+    --acento-txt: #ffe066;
+    --on-acento: #1a1400;
+}
+
+/* ----- paleta (tema claro): textos de acento más oscuros para que se lean ----- */
+body.modo-claro[data-acento="rojo"]     { --acento-txt: #c40500; }
+body.modo-claro[data-acento="azul"]     { --acento-txt: #0877c4; }
+body.modo-claro[data-acento="morado"]   { --acento-txt: #7a1fd1; }
+body.modo-claro[data-acento="amarillo"] { --acento-txt: #9a7400; }
+
+/* transición suave al cambiar de pestaña */
+body {
+    transition:
+        --acento 0.6s ease,
+        --acento-hover 0.6s ease,
+        --acento-txt 0.6s ease,
+        --on-acento 0.6s ease,
+        color 0.3s ease;
+}
+
+/* ----- FONDO MÁS NOTORIO ----- */
+body {
+    background:
+        radial-gradient(ellipse 70% 40% at 50% -5%,
+            color-mix(in srgb, var(--acento) 24%, transparent), transparent 70%),
+        linear-gradient(90deg,
+            color-mix(in srgb, var(--acento) 34%, #121113) 0%,
+            #121113 24%,
+            #121113 76%,
+            color-mix(in srgb, var(--acento) 34%, #121113) 100%);
+    background-attachment: fixed;
+}
+
+body.modo-claro {
+    background:
+        radial-gradient(ellipse 70% 40% at 50% -5%,
+            color-mix(in srgb, var(--acento) 26%, transparent), transparent 70%),
+        linear-gradient(90deg,
+            color-mix(in srgb, var(--acento) 32%, #f5f5f5) 0%,
+            #f5f5f5 24%,
+            #f5f5f5 76%,
+            color-mix(in srgb, var(--acento) 32%, #f5f5f5) 100%);
+    background-attachment: fixed;
+}
+
+html {
+    scrollbar-color: var(--acento) #0d1117;
+}
+
+/* ----- HEADER Y FOOTER ----- */
+header {
+    border-bottom-color: color-mix(in srgb, var(--acento) 55%, #21262d);
+    box-shadow: 0 4px 24px color-mix(in srgb, var(--acento) 20%, transparent);
+}
+
+body.modo-claro header {
+    border-bottom-color: color-mix(in srgb, var(--acento) 55%, #d5d5d5);
+}
+
+footer {
+    border-top-color: color-mix(in srgb, var(--acento) 45%, #21262d);
+}
+
+body.modo-claro footer {
+    border-top-color: color-mix(in srgb, var(--acento) 45%, #d5d5d5);
+}
+
+.header-controles button:hover {
+    border-color: var(--acento);
+}
+
+/* ----- LOGO (el cambio de imagen lo hace el JS) ----- */
+.logo img {
+    transition: opacity 0.25s ease, filter 0.4s ease;
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--acento) 55%, transparent));
+}
+
+/* ----- CAJAS DE CADA PÁGINA ----- */
+#inicio,
+#nosotros,
+.mision-contenido,
+.vision-contenido,
+.actualizaciones-contenido,
+.descargar-contenido {
+    border-color: color-mix(in srgb, var(--acento) 40%, #21262d);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25),
+        0 0 45px color-mix(in srgb, var(--acento) 16%, transparent);
+}
+
+body.modo-claro #inicio,
+body.modo-claro #nosotros,
+body.modo-claro .mision-contenido,
+body.modo-claro .vision-contenido,
+body.modo-claro .actualizaciones-contenido,
+body.modo-claro .descargar-contenido {
+    border-color: color-mix(in srgb, var(--acento) 45%, #d5d5d5);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.08),
+        0 0 45px color-mix(in srgb, var(--acento) 22%, transparent);
+}
+
+/* brillo sutil en los títulos (solo tema oscuro) */
+#inicio h1,
+.mision-contenido h1,
+.vision-contenido h1,
+.actualizaciones-texto h1,
+.descargar-titulo h1 {
+    text-shadow: 0 0 28px color-mix(in srgb, var(--acento) 45%, transparent);
+}
+
+body.modo-claro #inicio h1,
+body.modo-claro .mision-contenido h1,
+body.modo-claro .vision-contenido h1,
+body.modo-claro .actualizaciones-texto h1,
+body.modo-claro .descargar-titulo h1 {
+    text-shadow: none;
+}
+
+/* ----- LÍNEA DECORATIVA, BOTONES Y ETIQUETAS ----- */
+.linea-decorativa {
+    background-color: var(--acento);
+    box-shadow: 0 0 12px var(--acento);
+}
+
+#inicio a,
+#boton-cuenta,
+body.modo-claro #boton-cuenta,
+.version-etiqueta,
+.boton-descarga-version,
+.boton-descarga {
+    background-color: var(--acento);
+    color: var(--on-acento);
+}
+
+#inicio a:hover,
+#boton-cuenta:hover,
+.boton-descarga-version:hover,
+.boton-descarga:hover {
+    background-color: var(--acento-hover);
+}
+
+.vision-contenido strong,
+body.modo-claro .vision-contenido strong {
+    color: var(--acento-txt);
+}
+
+/* ----- TARJETAS ----- */
+.version-card:hover,
+.nosotros-imagenes figure:hover,
+body.modo-claro .nosotros-imagenes figure:hover {
+    border-color: var(--acento);
+}
+
+.plan-card::before {
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--acento) 40%, #000),
+        var(--acento),
+        var(--acento-hover));
+}
+
+.plan-card::after {
+    background: radial-gradient(circle,
+        color-mix(in srgb, var(--acento) 20%, transparent), transparent 70%);
+}
+
+.plan-card:hover {
+    border-color: var(--acento);
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.4),
+        0 0 22px color-mix(in srgb, var(--acento) 25%, transparent);
+}
+
+.plan-precio,
+body.modo-claro .plan-precio {
+    color: var(--acento-txt);
+    background-color: color-mix(in srgb, var(--acento) 12%, transparent);
+    border-color: color-mix(in srgb, var(--acento) 40%, transparent);
+}
+
+
+/* ============================================================ */
+/* IMÁGENES LATERALES (Inicio, Misión, Visión) + VENTANA        */
+/* (va al FINAL para sobreescribir lo anterior)                 */
+/* ============================================================ */
+
+/* imagen genérica con brillo del color de acento de cada página */
+.imagen-lateral {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagen-lateral img {
+    display: block;
+    width: 100%;
+    max-width: 440px;
+    max-height: 480px;
+    height: auto;
+    object-fit: contain;
+
+    filter: drop-shadow(0 0 22px color-mix(in srgb, var(--acento) 45%, transparent));
+}
+
+/* ----- INICIO: texto a la izquierda, "bloqueo" a la derecha ----- */
+#inicio {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: center;
+    gap: 40px;
+}
+
+.inicio-texto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.botones-inicio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#inicio .botones-inicio a {
+    margin: 0;
+}
+
+/* ----- MISIÓN: texto a la izquierda, "azul" a la derecha ----- */
+.mision-contenido {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: 50px;
+}
+
+.mision-contenido p {
+    font-size: 19px;
+}
+
+/* ----- VISIÓN: "morado" a la izquierda, texto a la derecha ----- */
+.vision-contenido {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    align-items: center;
+    gap: 50px;
+}
+
+.vision-texto {
+    max-width: none;
+    text-align: left;
+}
+
+.vision-contenido .linea-decorativa {
+    margin: 0 0 30px;
+}
+
+.vision-contenido p {
+    max-width: none;
+    margin: 0;
+    font-size: 19px;
+}
+
+/* ----- NOSOTROS: ahora son 3 imágenes en fila ----- */
+.nosotros-imagenes figure {
+    max-width: none;
+}
+
+/* ----- RESPONSIVE ----- */
+@media (max-width: 850px) {
+
+    #inicio,
+    .mision-contenido,
+    .vision-contenido {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .imagen-lateral img {
+        max-width: 300px;
+        max-height: 320px;
+    }
+
+    /* en móvil la visión muestra primero el texto y luego la imagen */
+    .vision-contenido .imagen-lateral {
+        order: 2;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .nosotros-imagenes {
+        flex-direction: column;
+    }
+}
 /* ============================= */
-/* MASCOTA EN TABLETAS */
+/* TRANSICIÓN ENTRE PESTAÑAS */
 /* ============================= */
 
-@media (max-width: 900px) {
+.transicion {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+}
 
-    .mascota {
-        width: 170px;
+.transicion.activa {
+    visibility: visible;
+}
+
+/* franja alta que baja por la pantalla:
+   color actual → negro → color nuevo (queda tapada ~0.3s en el centro) */
+.transicion-barrido {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 600%;
+    transform: translateY(-83.333%);
+    will-change: transform;
+
+    background: linear-gradient(180deg,
+        transparent 0%,
+        transparent 16.667%,
+        var(--tr-nuevo, #e10600) 25%,
+        var(--tr-nuevo, #e10600) 33%,
+        #000000 50%,
+        var(--tr-viejo, #e10600) 67%,
+        var(--tr-viejo, #e10600) 75%,
+        transparent 83.333%,
+        transparent 100%);
+}
+
+.transicion.activa .transicion-barrido {
+    animation: tr-barrido var(--tr-dur, 0.8s) cubic-bezier(.45, .05, .55, .95) forwards;
+}
+
+@keyframes tr-barrido {
+    from { transform: translateY(-83.333%); }
+    to   { transform: translateY(0); }
+}
+
+/* logo en la esquina derecha */
+.transicion-logo {
+    position: absolute;
+    right: clamp(14px, 3vw, 32px);
+    bottom: clamp(14px, 3vw, 32px);
+    width: clamp(120px, 15vw, 190px);
+    height: auto;
+    opacity: 0;
+    filter: drop-shadow(0 0 14px rgba(41, 169, 255, 0.55));
+}
+
+.transicion.activa .transicion-logo {
+    animation: tr-logo var(--tr-dur, 0.8s) ease forwards;
+}
+
+@keyframes tr-logo {
+    0%   { opacity: 0; transform: translateY(8px) scale(0.96); }
+    35%  { opacity: 1; transform: translateY(0) scale(1); }
+    65%  { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-4px) scale(1); }
+}
+
+/* mientras la pantalla está tapada, todo cambia al instante
+   (botón Registrarse, logo, anillo...) para que no se vea el cambio */
+body.tr-instantaneo,
+body.tr-instantaneo * {
+    transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .transicion { display: none; }
+}
+/* ============================================================ */
+/* FLOTACIÓN SUAVE DE IMÁGENES Y LOGOS                          */
+/* (va al FINAL del CSS)                                        */
+/* ============================================================ */
+
+/* ----- imágenes laterales (Inicio, Misión, Visión) ----- */
+.imagen-lateral img {
+    animation: flotar 7s ease-in-out infinite;
+    will-change: transform;
+}
+
+/* la imagen de la Visión (a la izquierda) se mueve desfasada,
+   para que no todas vayan al mismo ritmo */
+.vision-contenido .imagen-lateral img {
+    animation-name: flotar-inversa;
+    animation-duration: 8s;
+}
+
+/* ----- logo del header ----- */
+.logo img {
+    animation: flotar-logo 6s ease-in-out infinite;
+    will-change: transform;
+}
+
+/* ----- logo de la transición (esquina derecha) ----- */
+/* este ya usa animation en .activa, así que lo flotamos
+   con el wrapper del barrido; lo dejamos fuera a propósito */
+
+/* ----- imágenes de "¿Quiénes somos?" ----- */
+.nosotros-imagenes figure {
+    animation: flotar-suave 6.5s ease-in-out infinite;
+    will-change: transform;
+}
+
+.nosotros-imagenes figure:nth-child(2) {
+    animation-delay: -2s;
+    animation-duration: 7.5s;
+}
+
+.nosotros-imagenes figure:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 7s;
+}
+
+/* ----- KEYFRAMES ----- */
+
+/* sube/baja ~10px y se mueve ~6px de lado, con una mínima rotación */
+@keyframes flotar {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25%      { transform: translate(6px, -6px) rotate(0.6deg); }
+    50%      { transform: translate(0, -10px) rotate(0deg); }
+    75%      { transform: translate(-6px, -5px) rotate(-0.6deg); }
+}
+
+/* igual, pero recorriendo el camino al revés */
+@keyframes flotar-inversa {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25%      { transform: translate(-6px, -6px) rotate(-0.6deg); }
+    50%      { transform: translate(0, -10px) rotate(0deg); }
+    75%      { transform: translate(6px, -5px) rotate(0.6deg); }
+}
+
+/* el logo es pequeño, así que el movimiento es aún más sutil */
+@keyframes flotar-logo {
+    0%, 100% { transform: translate(0, 0); }
+    25%      { transform: translate(2px, -2px); }
+    50%      { transform: translate(0, -3px); }
+    75%      { transform: translate(-2px, -1.5px); }
+}
+
+/* para las 3 imágenes de "Quiénes somos" (se mueven menos
+   para no chocar con el hover de translateY(-3px)) */
+@keyframes flotar-suave {
+    0%, 100% { transform: translate(0, 0); }
+    25%      { transform: translate(3px, -3px); }
+    50%      { transform: translate(0, -5px); }
+    75%      { transform: translate(-3px, -2px); }
+}
+
+/* respeta a quien tiene "reducir movimiento" activado */
+@media (prefers-reduced-motion: reduce) {
+    .imagen-lateral img,
+    .logo img,
+    .nosotros-imagenes figure {
+        animation: none;
     }
 }

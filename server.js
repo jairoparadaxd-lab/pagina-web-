@@ -18,7 +18,7 @@ const db = mysql.createPool({
 });
 
 app.use(express.json());
-app.use(cors()); // en producción: cors({ origin: 'https://tudominio.com' })
+app.use(cors()); // en producción: cors({ origin: 'https://truelock.onrender.com' })
 
 const hash = (codigo) => crypto.createHash('sha256').update(String(codigo)).digest('hex');
 const emailValido = (e) => typeof e === 'string' && /^\S+@\S+\.\S+$/.test(e);
@@ -118,5 +118,5 @@ app.post('/api/verificar-codigo', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 11396;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

@@ -1,0 +1,229 @@
+/* ============================= */
+/* SELECTOR DE IDIOMA (login)    */
+/* Español / English / Português */
+/* ============================= */
+
+/* Si se te cruza con el botón de tema, cambia estas dos variables.
+   Por defecto el selector queda arriba a la izquierda. */
+
+:root {
+    --idioma-top: 16px;
+    --idioma-left: 16px;
+}
+
+.idioma-selector {
+    position: fixed;
+
+    top: var(--idioma-top);
+    left: var(--idioma-left);
+
+    z-index: 60;
+}
+
+.idioma-btn {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    height: 40px;
+
+    padding: 0 12px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.idioma-btn:hover,
+.idioma-selector.abierto .idioma-btn {
+    background-color: #1a1f27;
+
+    border-color: #e10600;
+
+    transform: translateY(-1px);
+}
+
+.idioma-btn svg {
+    flex-shrink: 0;
+}
+
+.idioma-codigo {
+    letter-spacing: 0.5px;
+}
+
+.idioma-nombre {
+    color: #9ba1a6;
+
+    font-weight: 500;
+}
+
+.idioma-flecha {
+    color: #9ba1a6;
+
+    transition: transform 0.2s ease;
+}
+
+.idioma-selector.abierto .idioma-flecha {
+    transform: rotate(180deg);
+}
+
+.idioma-lista {
+    position: absolute;
+
+    top: calc(100% + 6px);
+    left: 0;
+
+    min-width: 190px;
+
+    padding: 6px;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 10px;
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+
+    list-style: none;
+}
+
+.idioma-lista[hidden] {
+    display: none;
+}
+
+.idioma-opcion {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    outline: none;
+
+    transition: background-color 0.15s ease;
+}
+
+.idioma-opcion:hover,
+.idioma-opcion:focus-visible {
+    background-color: #1a1f27;
+}
+
+.idioma-opcion .idioma-cod {
+    width: 26px;
+
+    color: #9ba1a6;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.idioma-opcion .idioma-nom {
+    flex: 1;
+}
+
+.idioma-opcion .idioma-check {
+    opacity: 0;
+
+    color: #e10600;
+}
+
+.idioma-opcion.activo {
+    background-color: rgba(225, 6, 0, 0.12);
+}
+
+.idioma-opcion.activo .idioma-check {
+    opacity: 1;
+}
+
+
+/* ============================= */
+/* TEMA CLARO                    */
+/* ============================= */
+
+[data-tema="light"] .idioma-btn,
+[data-tema="light"] .idioma-lista {
+    background-color: #ffffff;
+
+    border-color: #d5d5d5;
+
+    color: #171717;
+}
+
+[data-tema="light"] .idioma-btn:hover,
+[data-tema="light"] .idioma-selector.abierto .idioma-btn {
+    background-color: #eeeeee;
+
+    border-color: #e10600;
+}
+
+[data-tema="light"] .idioma-nombre,
+[data-tema="light"] .idioma-flecha,
+[data-tema="light"] .idioma-opcion .idioma-cod {
+    color: #555555;
+}
+
+[data-tema="light"] .idioma-opcion {
+    color: #171717;
+}
+
+[data-tema="light"] .idioma-opcion:hover,
+[data-tema="light"] .idioma-opcion:focus-visible {
+    background-color: #eeeeee;
+}
+
+[data-tema="light"] .idioma-opcion.activo {
+    background-color: rgba(225, 6, 0, 0.08);
+}
+
+[data-tema="light"] .idioma-lista {
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+}
+
+
+/* ============================= */
+/* CELULARES                     */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+    :root {
+        --idioma-top: 12px;
+        --idioma-left: 12px;
+    }
+
+    .idioma-btn {
+        height: 38px;
+
+        padding: 0 10px;
+    }
+
+    .idioma-nombre {
+        display: none;
+    }
+
+}

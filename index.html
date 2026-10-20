@@ -40,22 +40,6 @@
 
 <body>
 
-
-    <!-- ============================= -->
-    <!-- MÚSICA DE FONDO (ya no se reinicia al cambiar de pestaña) -->
-    <!-- ============================= -->
-
-    <audio
-        id="musica-fondo"
-        loop>
-
-        <source
-            src="MUSICA/musica fondo.mp3"
-            type="audio/mpeg">
-
-    </audio>
-
-
     <!-- ============================= -->
     <!-- ENCABEZADO -->
     <!-- ============================= -->
@@ -223,65 +207,6 @@
 
 
                 <!-- ============================= -->
-                <!-- BOTÓN DE MÚSICA (altavoz SVG con ondas y animación al silenciar) -->
-                <!-- ============================= -->
-
-                <button
-                    type="button"
-                    id="boton-musica"
-                    aria-label="Activar o desactivar música">
-
-                    <span class="icono-musica">
-
-                        <svg
-                            class="icono-musica-svg"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            height="16"
-                            aria-hidden="true">
-
-                            <path
-                                class="altavoz-cuerpo"
-                                d="M3.5 9.5v5h3.6l5.2 4.3V5.2l-5.2 4.3H3.5Z"
-                                fill="currentColor"/>
-
-                            <path
-                                class="onda onda-1"
-                                d="M15.8 9.2a4 4 0 0 1 0 5.6"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.6"
-                                stroke-linecap="round"/>
-
-                            <path
-                                class="onda onda-2"
-                                d="M18.2 6.8a7.4 7.4 0 0 1 0 10.4"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.6"
-                                stroke-linecap="round"/>
-
-                            <path
-                                class="linea-mute"
-                                d="M15 8 L21 16"
-                                stroke="#ff3b30"
-                                stroke-width="1.8"
-                                stroke-linecap="round"/>
-
-                        </svg>
-
-                    </span>
-
-                    <span
-                        class="btn-label"
-                        data-i18n="btn-musica-off">
-                        Música desactivada
-                    </span>
-
-                </button>
-
-
-                <!-- ============================= -->
                 <!-- BOTÓN DE IDIOMA (icono propio en vez del emoji 🌐) -->
                 <!-- ============================= -->
 
@@ -380,32 +305,46 @@
 
             <div id="inicio">
 
-                <h1>TRUE LOCK</h1>
+                <div class="inicio-texto">
 
-                <h2 data-i18n="inicio-h2">
-                    Controla tu entorno. Enfócate en lo importante.
-                </h2>
+                    <h1>TRUE LOCK</h1>
 
-                <p data-i18n="inicio-p">
-                    Bienvenido al sitio oficial de TRUE LOCK, un proyecto
-                    desarrollado por aprendices con el propósito de ayudar
-                    a mejorar la concentración, la productividad y el control
-                    sobre las distracciones digitales.
-                </p>
+                    <h2 data-i18n="inicio-h2">
+                        Controla tu entorno. Enfócate en lo importante.
+                    </h2>
 
-                <a
-                    href="#mision"
-                    data-pagina="mision"
-                    data-i18n="inicio-btn1">
-                    Conocer TRUE LOCK
-                </a>
+                    <p data-i18n="inicio-p">
+                        Bienvenido al sitio oficial de TRUE LOCK, un proyecto
+                        desarrollado por aprendices con el propósito de ayudar
+                        a mejorar la concentración, la productividad y el control
+                        sobre las distracciones digitales.
+                    </p>
 
-                <a
-                    href="#descargar"
-                    data-pagina="descargar"
-                    data-i18n="inicio-btn2">
-                    Descargar
-                </a>
+                    <div class="botones-inicio">
+
+                        <a
+                            href="#mision"
+                            data-pagina="mision"
+                            data-i18n="inicio-btn1">
+                            Conocer TRUE LOCK
+                        </a>
+
+                        <a
+                            href="#descargar"
+                            data-pagina="descargar"
+                            data-i18n="inicio-btn2">
+                            Descargar
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="imagen-lateral inicio-imagen">
+                    <img
+                        src="IMAGENES/bloqueo.jpg"
+                        alt="Bloqueo de TRUE LOCK">
+                </div>
 
             </div>
 
@@ -449,6 +388,13 @@
                             loading="lazy">
                     </figure>
 
+                    <figure>
+                        <img
+                            src="IMAGENES/ventana.jpg"
+                            alt="Ventana de TRUE LOCK"
+                            loading="lazy">
+                    </figure>
+
                 </div>
 
             </div>
@@ -481,6 +427,12 @@
 
                 </div>
 
+                <div class="imagen-lateral">
+                    <img
+                        src="IMAGENES/azul.png"
+                        alt="Misión de TRUE LOCK">
+                </div>
+
             </div>
 
         </section>
@@ -493,6 +445,12 @@
         <section id="pagina-vision" class="pagina">
 
             <div class="vision-contenido">
+
+                <div class="imagen-lateral">
+                    <img
+                        src="IMAGENES/morado.png"
+                        alt="Visión de TRUE LOCK">
+                </div>
 
                 <div class="vision-texto">
 
@@ -733,40 +691,16 @@
         </p>
 
     </footer>
-
-
-    <!-- ============================= -->
-    <!-- MASCOTA SUPERPUESTA (fija en toda la página, arrastrable) -->
-    <!-- El segundo video (mascota_nueva) solo se ve mientras se agarra -->
-    <!-- ============================= -->
-
-    <div class="mascota" id="mascota">
-
-        <video class="mascota-normal" autoplay loop muted playsinline>
-            <source src="VIDEOS/mascota.webm" type="video/webm">
-            Tu navegador no soporta videos WebM.
-        </video>
-
-        <video class="mascota-agarrada" autoplay loop muted playsinline preload="auto">
-            <source src="VIDEOS/mascota_nueva.webm" type="video/webm">
-        </video>
-
-    </div>
-
+<div class="transicion" id="transicion" aria-hidden="true">
+    <div class="transicion-barrido"></div>
+    <img class="transicion-logo" src="IMAGENES/four.png" alt="">
+</div>
 
     <!-- ============================= -->
     <!-- JAVASCRIPT ÚNICO, FUSIONADO -->
     <!-- ============================= -->
 
     <script src="JS/script.js"></script>
-
-
-    <!-- ============================= -->
-    <!-- JAVASCRIPT DE LA MASCOTA (si lo tienes, déjalo igual) -->
-    <!-- ============================= -->
-
-    <script src="JS/mascota.js"></script>
-
 
 </body>
 

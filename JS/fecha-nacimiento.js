@@ -1,726 +1,558 @@
-// =============================
-// FECHA DE NACIMIENTO (CREAR CUENTA)
-// Calendario personalizado + validación de fecha y edad mínima.
+// ============================================================
+// MEDIDOR DE CONTRASEÑA CON CANDADO
 // Cargar DESPUÉS de login.js
 //
-// - Se puede escribir: solo números, y las " / " se agregan solas (DD / MM / AAAA).
-// - Se puede elegir en el calendario: se abre al entrar en la casilla
-//   (clic o foco) o con el botón de la derecha.
-// =============================
+// No usa @property, color-mix() ni transform de CSS sobre SVG.
+// El arco se mueve con el atributo "transform" del SVG, animado
+// desde JS, así que funciona en cualquier navegador.
+// ============================================================
 
 (function () {
 
-    const campo = document.getElementById("fecha-campo");
-    const visibleOriginal = document.getElementById("registro-fecha-visible");
-    const oculto = document.getElementById("registro-fecha-nacimiento");
-    const botonOriginal = document.getElementById("fecha-abrir");
-    const popupOriginal = document.getElementById("fecha-popup");
-    const hint = document.getElementById("fecha-hint");
-    const selectTipo = document.getElementById("registro-tipo");
-    const formulario = document.getElementById("form-registro");
+    const inputPassword = document.getElementById("registro-password");
+    const meter = document.getElementById("pw-meter");
 
-    if (!campo || !visibleOriginal || !oculto || !botonOriginal || !popupOriginal || !hint) {
+    if (!inputPassword || !meter) {
+        console.warn("[pw] Falta #registro-password o #pw-meter en el HTML.");
         return;
     }
 
-    // login.js trae una copia de este mismo bloque. Para que los eventos no se dupliquen
-    // (el botón abría y cerraba el calendario a la vez), se reemplazan los elementos por
-    // copias limpias y este archivo queda como único responsable de la fecha.
+    // Nivel mínimo para poder crear la cuenta:
+    // 0 = sin contraseña, 1 = débil, 2 = media, 3 = fuerte, 4 = muy segura
+    const NIVEL_MINIMO = 2;
 
-    function sinEventos(nodo) {
+    const BITS_MAX = 90;           // a partir de aquí el candado ya es 100% azul
+    const LIMITES = [34, 60, 80];  // bits donde cambia de nivel
 
-        const copia = nodo.cloneNode(true);
+    const BITS_CIERRE = 60;        // bits a los que el arco queda del todo abajo
+    const ARCO_ABIERTO = -9;       // desplazamiento del arco con el candado abierto
 
-        nodo.parentNode.replaceChild(copia, nodo);
+    const COLOR_REPOSO = [110, 118, 129];   // #6e7681
+    const COLOR_BORDE = [33, 38, 45];       // #21262d
+    const COLOR_FONDO_BASE = [225, 6, 0];   // #e10600
 
-        return copia;
+    // ----- Tema claro: tonos más profundos para que se noten sobre fondo claro -----
+    const COLOR_REPOSO_CLARO = [140, 128, 130];
+    const COLOR_BORDE_CLARO = [214, 196, 192];
+    const COLOR_FONDO_BASE_CLARO = [224, 92, 80];   // coral cálido (no rojo sangre)
+    const COLOR_ESQUINA_CLARO = [168, 78, 88];      // rosa vino suave para la esquina
 
-    }
-
-    const visible = sinEventos(visibleOriginal);
-    const botonAbrir = sinEventos(botonOriginal);
-    const popup = sinEventos(popupOriginal);
-
-    popup.hidden = true;
-
-    const grupo = visible.closest(".form-group");
-
-    // ---- Configuración ----
-
-    const EDAD_MINIMA = { participante: 5, director: 18, administrador: 18 };
-
-    const ROL_TEXTO = {
-        participante: "los participantes",
-        director: "los directores",
-        administrador: "los administradores"
-    };
-
-    const ANIO_MINIMO = 1900;
-    const ANIOS_EN_CHIPS = 100;
-
-    const MESES = [
-        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    const PARADAS_CLARO = [
+        [0, [214, 40, 40]],     // rojo
+        [28, [214, 40, 40]],
+        [40, [232, 138, 0]],    // ámbar
+        [56, [232, 138, 0]],
+        [66, [22, 163, 88]],    // verde
+        [76, [22, 163, 88]],
+        [88, [30, 100, 235]]    // azul
     ];
 
-    const DIAS_SEMANA = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"];
+    // Paradas de color: [bits, [r, g, b]]. Entre paradas se interpola.
+    const PARADAS = [
+        [0, [229, 37, 42]],     // rojo
+        [28, [229, 37, 42]],
+        [40, [245, 184, 0]],    // amarillo
+        [56, [245, 184, 0]],
+        [66, [46, 204, 113]],   // verde
+        [76, [46, 204, 113]],
+        [88, [47, 128, 255]]    // azul
+    ];
 
-    // ---- Estado ----
+    const NIVELES = [
+        { nombre: "Sin contraseña", mensaje: "El candado está abierto." },
+        { nombre: "Débil", mensaje: "Se puede adivinar con facilidad." },
+        { nombre: "Media", mensaje: "Añade longitud o símbolos para mejorarla." },
+        { nombre: "Fuerte", mensaje: "Buena contraseña. Un poco más y es máxima." },
+        { nombre: "Muy segura", mensaje: "Candado sellado. Nivel máximo." }
+    ];
 
-    let seleccion = null;   // { y, m (1-12), d }
-    let vista = { y: 0, m: 0 };   // m: 0-11
+    const COMUNES = [
+        "password", "contrasena", "contraseña", "123456", "12345678", "123456789",
+        "qwerty", "abc123", "admin", "letmein", "iloveyou", "truelock",
+        "111111", "000000", "colombia", "password1", "qwerty123"
+    ];
 
-    // ---- Utilidades de fecha ----
+    const SECUENCIAS = [
+        "abcdefghijklmnopqrstuvwxyz", "0123456789", "qwertyuiop", "asdfghjkl", "zxcvbnm"
+    ];
 
-    function hoy() {
+    const elBody = document.body;
+    const elCard = meter.closest(".auth-card");
+    const elLabel = document.getElementById("pw-label");
+    const elBits = document.getElementById("pw-bits");
+    const elMsg = document.getElementById("pw-msg");
+    const elFill = document.getElementById("pw-fill");
+    const elShackle = document.getElementById("pw-shackle");
+    const elSvg = meter.querySelector(".pw-lock svg");
+    const elCuerpo = meter.querySelector(".pw-body");
+    const elReqs = meter.querySelectorAll("[data-req]");
 
-        const h = new Date();
-
-        return new Date(h.getFullYear(), h.getMonth(), h.getDate());
-
+    if (!elShackle) {
+        console.warn("[pw] No se encontró #pw-shackle: el candado no se podrá animar.");
     }
 
-    function dos(n) {
-
-        return String(n).padStart(2, "0");
-
-    }
-
-    function aISO(y, m, d) {
-
-        return y + "-" + dos(m) + "-" + dos(d);
-
-    }
-
-    function fechaExiste(y, m, d) {
-
-        const f = new Date(y, m - 1, d);
-
-        return f.getFullYear() === y && f.getMonth() === m - 1 && f.getDate() === d;
-
-    }
-
-    function calcularEdad(y, m, d) {
-
-        const h = hoy();
-
-        let edad = h.getFullYear() - y;
-
-        const aunNoCumple =
-            h.getMonth() + 1 < m || (h.getMonth() + 1 === m && h.getDate() < d);
-
-        if (aunNoCumple) {
-            edad--;
-        }
-
-        return edad;
-
-    }
-
-    function tipoActual() {
-
-        return selectTipo ? selectTipo.value : "participante";
-
-    }
-
-    function edadMinimaActual() {
-
-        return EDAD_MINIMA[tipoActual()] || 5;
-
-    }
-
-    // Fecha de nacimiento más reciente permitida: hoy menos la edad mínima del tipo de cuenta
-    // (participante 5 años, director y administrador 18 años).
-
-    function fechaLimite() {
-
-        const h = hoy();
-        const anio = h.getFullYear() - edadMinimaActual();
-
-        let f = new Date(anio, h.getMonth(), h.getDate());
-
-        // 29 de febrero en un año no bisiesto: usar el último día de febrero
-        if (f.getMonth() !== h.getMonth()) {
-            f = new Date(anio, h.getMonth() + 1, 0);
-        }
-
-        return f;
-
-    }
-
-    // ¿Estos dígitos pueden llegar a ser una fecha real y permitida?
-    // Se usa al escribir para no dejar pasar días, meses o años imposibles,
-    // fechas futuras ni fechas que no cumplan la edad mínima.
-
-    function prefijoValido(dg) {
-
-        const n = dg.length;
-
-        if (n === 0) {
-            return true;
-        }
-
-        if (Number(dg[0]) > 3) {
-            return false;
-        }
-
-        if (n >= 2) {
-            const d = Number(dg.slice(0, 2));
-            if (d < 1 || d > 31) { return false; }
-        }
-
-        if (n >= 3 && Number(dg[2]) > 1) {
-            return false;
-        }
-
-        if (n >= 4) {
-
-            const d = Number(dg.slice(0, 2));
-            const m = Number(dg.slice(2, 4));
-            const maxDia = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-            if (m < 1 || m > 12 || d > maxDia[m - 1]) {
-                return false;
-            }
-
-        }
-
-        if (n >= 5) {
-
-            const d = Number(dg.slice(0, 2));
-            const m = Number(dg.slice(2, 4));
-            const prefijo = dg.slice(4);
-            const limite = fechaLimite();
-
-            // Debe existir algún año que empiece así y dé una fecha real y permitida
-            for (let y = limite.getFullYear(); y >= ANIO_MINIMO; y--) {
-
-                if (String(y).indexOf(prefijo) !== 0) { continue; }
-
-                if (fechaExiste(y, m, d) && new Date(y, m - 1, d) <= limite) {
-                    return true;
-                }
-
-            }
-
-            return false;
-
-        }
-
-        return true;
-
-    }
-
-    // Se queda con los dígitos válidos y corta en el primero que no lo es
-
-    function recortarValidos(dg) {
-
-        let ok = "";
-
-        for (let i = 0; i < dg.length; i++) {
-
-            if (!prefijoValido(ok + dg[i])) {
-                break;
-            }
-
-            ok += dg[i];
-
-        }
-
-        return ok;
-
-    }
-
-    function textoLimite() {
-
-        const f = fechaLimite();
-
-        return dos(f.getDate()) + " / " + dos(f.getMonth() + 1) + " / " + f.getFullYear();
-
-    }
-
-    function formatear(digitos) {
-
-        let texto = digitos.slice(0, 2);
-
-        if (digitos.length > 2) {
-            texto += " / " + digitos.slice(2, 4);
-        }
-
-        if (digitos.length > 4) {
-            texto += " / " + digitos.slice(4, 8);
-        }
-
-        return texto;
-
-    }
-
-    function parsear(digitos) {
-
-        return {
-            d: parseInt(digitos.slice(0, 2), 10),
-            m: parseInt(digitos.slice(2, 4), 10),
-            y: parseInt(digitos.slice(4, 8), 10)
-        };
-
-    }
-
-    // Devuelve "" si la fecha es válida, o el mensaje de error.
-
-    function evaluar(y, m, d, tipo) {
-
-        if (y < ANIO_MINIMO || !fechaExiste(y, m, d)) {
-            return "Fecha inválida. Revisa el día, el mes y el año.";
-        }
-
-        if (new Date(y, m - 1, d) > hoy()) {
-            return "Fecha inválida: no puede ser posterior a hoy.";
-        }
-
-        const minimo = EDAD_MINIMA[tipo] || 5;
-
-        if (calcularEdad(y, m, d) < minimo) {
-            return "Edad mínima para " + (ROL_TEXTO[tipo] || "este tipo de cuenta") +
-                ": " + minimo + " años.";
-        }
-
-        return "";
-
-    }
-
-    // ---- Mensaje bajo el campo ----
-
-    function pintarHint(mensaje) {
-
-        if (mensaje) {
-
-            hint.textContent = mensaje;
-            hint.classList.add("form-hint-error");
-            grupo.classList.add("campo-invalido");
-
-        } else {
-
-            hint.textContent = "Edad mínima: " + edadMinimaActual() + " años.";
-            hint.classList.remove("form-hint-error");
-            grupo.classList.remove("campo-invalido");
-
-        }
-
-    }
-
-    // Guarda (o descarta) la fecha según sea válida. Devuelve true si es válida.
-
-    function aplicar(y, m, d) {
-
-        const mensaje = evaluar(y, m, d, tipoActual());
-
-        if (mensaje) {
-
-            oculto.value = "";
-            seleccion = null;
-
-            pintarHint(mensaje);
-
-            return false;
-
-        }
-
-        seleccion = { y: y, m: m, d: d };
-
-        oculto.value = aISO(y, m, d);
-
-        pintarHint("");
-
-        return true;
-
-    }
-
-    function limpiar() {
-
-        visible.value = "";
-        oculto.value = "";
-        seleccion = null;
-
-        pintarHint("");
-        cerrar();
-
-    }
-
-    // ---- Calendario ----
-
-    function crear(etiqueta, clase) {
-
-        const nodo = document.createElement(etiqueta);
-
-        if (clase) {
-            nodo.className = clase;
-        }
-
-        return nodo;
-
-    }
-
-    function cambiarMes(delta) {
-
-        let m = vista.m + delta;
-        let y = vista.y;
-
-        if (m < 0) { m = 11; y--; }
-        if (m > 11) { m = 0; y++; }
-
-        vista = { y: y, m: m };
-
-        render();
-
-    }
-
-    function elegirDia(d) {
-
-        const y = vista.y;
-        const m = vista.m + 1;
-
-        visible.value = formatear(dos(d) + dos(m) + String(y));
-
-        aplicar(y, m, d);
-
-        cerrar();
-
-    }
-
-    function render() {
-
-        const h = fechaLimite();
-        const anioMax = h.getFullYear();
-
-        popup.textContent = "";
-
-        // Chips de años
-
-        const chips = crear("div", "fecha-anios");
-
-        for (let a = anioMax; a >= Math.max(ANIO_MINIMO, anioMax - ANIOS_EN_CHIPS); a--) {
-
-            const chip = crear("button", "fecha-anio");
-
-            chip.type = "button";
-            chip.textContent = a;
-
-            if (a === vista.y) {
-                chip.classList.add("activo");
-            }
-
-            chip.addEventListener("click", function () {
-
-                vista.y = a;
-
-                // No permitir quedarse en un mes futuro del año actual
-                if (a === anioMax && vista.m > h.getMonth()) {
-                    vista.m = h.getMonth();
-                }
-
-                render();
-
-            });
-
-            chips.appendChild(chip);
-
-        }
-
-        popup.appendChild(chips);
-
-        // Encabezado: mes y año con flechas
-
-        const cabecera = crear("div", "fecha-cabecera");
-
-        const anterior = crear("button", "fecha-nav");
-        anterior.type = "button";
-        anterior.textContent = "‹";
-        anterior.setAttribute("aria-label", "Mes anterior");
-        anterior.disabled = vista.y <= ANIO_MINIMO && vista.m === 0;
-        anterior.addEventListener("click", function () { cambiarMes(-1); });
-
-        const titulo = crear("strong", "fecha-titulo");
-        titulo.textContent = MESES[vista.m] + " " + vista.y;
-
-        const siguiente = crear("button", "fecha-nav");
-        siguiente.type = "button";
-        siguiente.textContent = "›";
-        siguiente.setAttribute("aria-label", "Mes siguiente");
-        siguiente.disabled = vista.y >= anioMax && vista.m >= h.getMonth();
-        siguiente.addEventListener("click", function () { cambiarMes(1); });
-
-        cabecera.appendChild(anterior);
-        cabecera.appendChild(titulo);
-        cabecera.appendChild(siguiente);
-
-        popup.appendChild(cabecera);
-
-        // Cuadrícula de días
-
-        const grilla = crear("div", "fecha-grilla");
-
-        DIAS_SEMANA.forEach(function (nombre) {
-
-            const celda = crear("span", "fecha-semana");
-            celda.textContent = nombre;
-            grilla.appendChild(celda);
-
-        });
-
-        const primerDia = new Date(vista.y, vista.m, 1).getDay();
-        const totalDias = new Date(vista.y, vista.m + 1, 0).getDate();
-
-        for (let i = 0; i < primerDia; i++) {
-            grilla.appendChild(crear("span", "fecha-vacio"));
-        }
-
-        for (let d = 1; d <= totalDias; d++) {
-
-            const boton = crear("button", "fecha-dia");
-            const fecha = new Date(vista.y, vista.m, d);
-
-            boton.type = "button";
-            boton.textContent = d;
-
-            if (fecha > h) {
-
-                boton.disabled = true;
-
-            } else {
-
-                boton.addEventListener("click", function () { elegirDia(d); });
-
-            }
-
-            if (fecha.getTime() === hoy().getTime()) {
-                boton.classList.add("hoy");
-            }
-
-            if (seleccion && seleccion.y === vista.y && seleccion.m === vista.m + 1 && seleccion.d === d) {
-                boton.classList.add("elegido");
-            }
-
-            grilla.appendChild(boton);
-
-        }
-
-        popup.appendChild(grilla);
-
-        // Dejar visible el año elegido dentro de la fila de chips
-
-        const activo = chips.querySelector(".activo");
-
-        if (activo) {
-            chips.scrollLeft = activo.offsetLeft - chips.clientWidth / 2 + activo.offsetWidth / 2;
-        }
-
-    }
-
-    function abrir() {
-
-        if (!popup.hidden) {
-            return;
-        }
-
-        if (seleccion) {
-
-            vista = { y: seleccion.y, m: seleccion.m - 1 };
-
-        } else {
-
-            // Abre cerca de una edad válida para el tipo de cuenta elegido
-            vista = { y: fechaLimite().getFullYear(), m: 0 };
-
-        }
-
-        popup.hidden = false;
-        botonAbrir.setAttribute("aria-expanded", "true");
-
-        render();
-
-    }
-
-    function cerrar() {
-
-        popup.hidden = true;
-        botonAbrir.setAttribute("aria-expanded", "false");
-
-    }
-
-    // ---- Eventos ----
-
-    // Botón de la derecha: abre / cierra el calendario
-
-    botonAbrir.addEventListener("click", function () {
-
-        if (popup.hidden) {
-            abrir();
-        } else {
-            cerrar();
-        }
-
-    });
-
-    // Al entrar en la casilla (clic o foco) se abre el calendario;
-    // aun así se puede seguir escribiendo.
-
-    visible.addEventListener("focus", abrir);
-    visible.addEventListener("click", abrir);
-
-    // Los clics dentro del calendario no deben cerrarlo (los botones se re-dibujan)
-
-    popup.addEventListener("click", function (evento) {
-
-        evento.stopPropagation();
-
-    });
-
-    document.addEventListener("click", function (evento) {
-
-        if (!campo.contains(evento.target)) {
-            cerrar();
-        }
-
-    });
-
-    document.addEventListener("keydown", function (evento) {
-
-        if (evento.key === "Escape") {
-            cerrar();
-        }
-
-    });
-
-    // Escribir a mano: solo dígitos, con las " / " puestas automáticamente
-
-    visible.addEventListener("input", function (evento) {
-
-        const crudos = visible.value.replace(/\D/g, "").slice(0, 8);
-        const digitos = recortarValidos(crudos);
-        const rechazado = digitos.length < crudos.length;
-        const borrando = evento.inputType && evento.inputType.indexOf("delete") === 0;
-
-        let texto = formatear(digitos);
-
-        // Al completar el día o el mes, la barra se agrega sola
-
-        if (!borrando && (digitos.length === 2 || digitos.length === 4)) {
-            texto += " / ";
-        }
-
-        visible.value = texto;
-
-        // Se escribió algo imposible, futuro o que no cumple la edad mínima: no se deja pasar
-
-        if (rechazado) {
-
-            oculto.value = "";
-            seleccion = null;
-
-            pintarHint(
-                "Fecha no permitida. Edad mínima: " + edadMinimaActual() +
-                " años (fecha más reciente: " + textoLimite() + ")."
-            );
-
-            return;
-
-        }
-
-        if (digitos.length < 8) {
-
-            oculto.value = "";
-            seleccion = null;
-
-            pintarHint("");
-
-            return;
-
-        }
-
-        const p = parsear(digitos);
-
-        if (aplicar(p.y, p.m, p.d)) {
-
-            vista = { y: p.y, m: p.m - 1 };
-
-            if (!popup.hidden) {
-                render();
-            }
-
-        }
-
-    });
-
-    // Si cambia el tipo de cuenta, se vuelve a revisar la edad mínima
-
-    if (selectTipo) {
-
-        selectTipo.addEventListener("change", function () {
-
-            const digitos = visible.value.replace(/\D/g, "");
-
-            if (digitos.length === 8) {
-
-                const p = parsear(digitos);
-
-                aplicar(p.y, p.m, p.d);
-
-            } else {
-
-                pintarHint("");
-
-            }
-
-        });
-
-    }
-
-    if (formulario) {
-
-        formulario.addEventListener("reset", function () {
-
-            setTimeout(limpiar, 0);
-
-        });
-
-    }
-
-    // ---- API pública: la usa login.js al enviar el formulario ----
-
-    window.validarFechaNacimiento = function (tipo) {
-
-        const digitos = visible.value.replace(/\D/g, "");
-
-        let mensaje = "";
-
-        if (!digitos.length) {
-
-            mensaje = "Selecciona tu fecha de nacimiento.";
-
-        } else if (digitos.length < 8) {
-
-            mensaje = "Fecha inválida. Usa el formato DD / MM / AAAA.";
-
-        } else {
-
-            const p = parsear(digitos);
-
-            mensaje = evaluar(p.y, p.m, p.d, tipo || tipoActual());
-
-        }
-
-        if (mensaje) {
-
-            pintarHint(mensaje);
-
-            return { ok: false, mensaje: mensaje };
-
-        }
-
-        return { ok: true, mensaje: "" };
-
+    const REQUISITOS = {
+        largo: function (p) { return p.length >= 8; },
+        mayus: function (p) { return /[A-ZÁÉÍÓÚÑ]/.test(p); },
+        minus: function (p) { return /[a-záéíóúñ]/.test(p); },
+        numero: function (p) { return /\d/.test(p); },
+        simbolo: function (p) { return /[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ]/.test(p); }
     };
 
-    pintarHint("");
+
+    // ---------- Utilidades de color ----------
+
+    function rgb(c) {
+        return "rgb(" + c[0] + ", " + c[1] + ", " + c[2] + ")";
+    }
+
+    function rgba(c, alfa) {
+        return "rgba(" + c[0] + ", " + c[1] + ", " + c[2] + ", " + alfa + ")";
+    }
+
+    function mezclar(a, b, t) {
+        return [
+            Math.round(a[0] + (b[0] - a[0]) * t),
+            Math.round(a[1] + (b[1] - a[1]) * t),
+            Math.round(a[2] + (b[2] - a[2]) * t)
+        ];
+    }
+
+
+    // ---------- Cálculo de la fuerza ----------
+
+    function contarSecuencias(pw) {
+
+        const min = pw.toLowerCase();
+        let total = 0;
+
+        for (let i = 0; i <= min.length - 3; i++) {
+
+            const trio = min.slice(i, i + 3);
+            const inverso = trio.split("").reverse().join("");
+
+            const esSecuencia = SECUENCIAS.some(function (s) {
+                return s.indexOf(trio) !== -1 || s.indexOf(inverso) !== -1;
+            });
+
+            if (esSecuencia) {
+                total++;
+            }
+
+        }
+
+        return total;
+
+    }
+
+    function calcularBits(pw) {
+
+        if (!pw) {
+            return 0;
+        }
+
+        const min = pw.toLowerCase();
+
+        const esComun = COMUNES.some(function (c) {
+            return min === c || min.replace(/\d+$/, "") === c;
+        });
+
+        if (esComun) {
+            return Math.min(10, pw.length);
+        }
+
+        let pool = 0;
+
+        if (/[a-záéíóúñ]/.test(pw)) { pool += 27; }
+        if (/[A-ZÁÉÍÓÚÑ]/.test(pw)) { pool += 27; }
+        if (/\d/.test(pw)) { pool += 10; }
+        if (/[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ]/.test(pw)) { pool += 33; }
+
+        if (pool <= 1) {
+            return 0;
+        }
+
+        // Los caracteres repetidos aportan muy poco
+        const unicos = new Set(pw.split("")).size;
+        const efectivos = unicos + (pw.length - unicos) * 0.25;
+
+        let bits = efectivos * Math.log2(pool) * 0.85;
+
+        // Penalización por secuencias tipo "abc", "123", "qwe"
+        bits -= contarSecuencias(pw) * 6;
+
+        return Math.max(0, bits);
+
+    }
+
+    function nivelDeBits(bits) {
+
+        if (bits <= 0) { return 0; }
+        if (bits < LIMITES[0]) { return 1; }
+        if (bits < LIMITES[1]) { return 2; }
+        if (bits < LIMITES[2]) { return 3; }
+
+        return 4;
+
+    }
+
+    function esClaro() {
+        return document.documentElement.getAttribute("data-tema") === "light";
+    }
+
+    function colorBase() {
+        return esClaro() ? COLOR_FONDO_BASE_CLARO : COLOR_FONDO_BASE;
+    }
+
+    function colorDeBits(bits) {
+
+        const paradas = esClaro() ? PARADAS_CLARO : PARADAS;
+
+        if (bits <= paradas[0][0]) {
+            return paradas[0][1];
+        }
+
+        for (let i = 1; i < paradas.length; i++) {
+
+            const a = paradas[i - 1];
+            const b = paradas[i];
+
+            if (bits <= b[0]) {
+                return mezclar(a[1], b[1], (bits - a[0]) / (b[0] - a[0]));
+            }
+
+        }
+
+        return paradas[paradas.length - 1][1];
+
+    }
+
+
+    // ---------- Movimiento del arco ----------
+    // Se anima el atributo "transform" del SVG desde JS.
+    // Es la única forma que se comporta igual en todos los navegadores.
+
+    let arcoActual = ARCO_ABIERTO;
+    let arcoObjetivo = ARCO_ABIERTO;
+    let animacion = null;
+
+    function pintarArco() {
+
+        if (!elShackle) {
+            return;
+        }
+
+        elShackle.setAttribute("transform", "translate(0 " + arcoActual.toFixed(2) + ")");
+
+    }
+
+    function pasoAnimacion() {
+
+        const diferencia = arcoObjetivo - arcoActual;
+
+        if (Math.abs(diferencia) < 0.05) {
+
+            arcoActual = arcoObjetivo;
+            pintarArco();
+
+            animacion = null;
+
+            return;
+
+        }
+
+        arcoActual += diferencia * 0.2;
+
+        pintarArco();
+
+        animacion = requestAnimationFrame(pasoAnimacion);
+
+    }
+
+    function moverArco(destino) {
+
+        arcoObjetivo = destino;
+
+        if (animacion === null) {
+            animacion = requestAnimationFrame(pasoAnimacion);
+        }
+
+    }
+
+
+    // ---------- Fondo de la página ----------
+    // El color se anima en JS (los degradados no se pueden transicionar con CSS),
+    // así el cambio entre rojo, ámbar, verde y azul se ve fluido.
+
+    let fondoActual = null;
+    let fondoObjetivo = null;
+    let animFondo = null;
+
+    function renderFondo(c) {
+
+        const color = [Math.round(c[0]), Math.round(c[1]), Math.round(c[2])];
+
+        if (esClaro()) {
+
+            const esquina = mezclar(COLOR_ESQUINA_CLARO, color, 0.45);
+
+            elBody.style.backgroundImage =
+                "radial-gradient(circle at 0% 100%, " + rgba(color, 0.62) + ", transparent 62%)," +
+                "radial-gradient(circle at 100% 0%, " + rgba(color, 0.46) + ", transparent 58%)," +
+                "radial-gradient(circle at 100% 100%, " + rgba(color, 0.56) + ", transparent 62%)," +
+                "radial-gradient(circle at 0% 0%, " + rgba(esquina, 0.42) + ", transparent 55%)";
+
+        } else {
+
+            elBody.style.backgroundImage =
+                "radial-gradient(circle at 0% 100%, " + rgba(color, 0.3) + ", transparent 55%)," +
+                "radial-gradient(circle at 100% 0%, " + rgba(color, 0.18) + ", transparent 50%)," +
+                "radial-gradient(circle at 100% 100%, " + rgba(color, 0.24) + ", transparent 55%)," +
+                "radial-gradient(circle at 0% 0%, rgba(0, 0, 0, 0.6), transparent 45%)";
+
+        }
+
+    }
+
+    function pasoFondo() {
+
+        let falta = 0;
+
+        for (let k = 0; k < 3; k++) {
+
+            const d = fondoObjetivo[k] - fondoActual[k];
+
+            fondoActual[k] += d * 0.14;
+
+            falta = Math.max(falta, Math.abs(d));
+
+        }
+
+        if (falta < 0.6) {
+
+            fondoActual = fondoObjetivo.slice();
+            renderFondo(fondoActual);
+
+            animFondo = null;
+
+            return;
+
+        }
+
+        renderFondo(fondoActual);
+
+        animFondo = requestAnimationFrame(pasoFondo);
+
+    }
+
+    function pintarFondo(color) {
+
+        fondoObjetivo = color.slice();
+
+        if (!fondoActual) {
+
+            fondoActual = color.slice();
+            renderFondo(fondoActual);
+
+            return;
+
+        }
+
+        if (animFondo === null) {
+            animFondo = requestAnimationFrame(pasoFondo);
+        }
+
+    }
+
+
+    // ---------- Pintar todo ----------
+
+    let nivelActual = 0;
+
+    function actualizar() {
+
+        const pw = inputPassword.value;
+        const bits = calcularBits(pw);
+        const nivel = nivelDeBits(bits);
+        const progreso = Math.min(bits / BITS_MAX, 1);
+
+        nivelActual = nivel;
+
+        const claro = esClaro();
+        const color = nivel === 0
+            ? (claro ? COLOR_REPOSO_CLARO : COLOR_REPOSO)
+            : colorDeBits(bits);
+        const colorTexto = rgb(color);
+
+        // En tema claro el texto va más oscuro para mantener el contraste
+        const colorLetra = rgb(claro ? mezclar(color, [0, 0, 0], 0.32) : color);
+
+        // Candado
+
+        if (elShackle) {
+            elShackle.style.stroke = colorTexto;
+        }
+
+        if (elCuerpo) {
+            elCuerpo.style.fill = colorTexto;
+        }
+
+        if (elSvg) {
+
+            const brillo = nivel === 0 ? 0 : Math.round(progreso * progreso * 16);
+
+            elSvg.style.filter =
+                brillo > 0 ? "drop-shadow(0 0 " + brillo + "px " + colorTexto + ")" : "none";
+
+        }
+
+        moverArco(ARCO_ABIERTO * (1 - Math.min(bits / BITS_CIERRE, 1)));
+
+        // Borde de la tarjeta
+
+        meter.style.borderColor = rgb(
+            mezclar(claro ? COLOR_BORDE_CLARO : COLOR_BORDE, color, claro ? 0.9 : 0.45)
+        );
+
+        // Solo en tema claro: la tarjeta del medidor y la tarjeta principal se tiñen
+        meter.style.backgroundColor = claro
+            ? rgba(color, nivel === 0 ? 0.06 : 0.16)
+            : "";
+
+        if (elCard) {
+            elCard.style.boxShadow = claro
+                ? "0 25px 60px " + rgba(color, nivel === 0 ? 0.14 : 0.38)
+                : "";
+        }
+
+        // Barra y textos
+
+        if (elFill) {
+            elFill.style.width = (progreso * 100).toFixed(1) + "%";
+            elFill.style.backgroundColor = colorTexto;
+        }
+
+        if (elLabel) {
+            elLabel.textContent = NIVELES[nivel].nombre;
+            elLabel.style.color = colorLetra;
+        }
+
+        if (elMsg) {
+            elMsg.textContent = NIVELES[nivel].mensaje;
+        }
+
+        if (elBits) {
+            elBits.textContent = Math.round(bits) + " bits";
+        }
+
+        meter.classList.toggle("maximo", nivel === 4);
+
+        // Requisitos
+
+        elReqs.forEach(function (li) {
+
+            const prueba = REQUISITOS[li.getAttribute("data-req")];
+            const cumple = !!prueba && prueba(pw);
+
+            li.classList.toggle("ok", cumple);
+
+            if (cumple) {
+                li.style.color = colorLetra;
+                li.style.borderColor = rgba(color, claro ? 0.85 : 0.55);
+                li.style.backgroundColor = rgba(color, claro ? 0.2 : 0.12);
+            } else {
+                li.style.color = "";
+                li.style.borderColor = "";
+                li.style.backgroundColor = "";
+            }
+
+        });
+
+        // Fondo de la página
+
+        pintarFondo(nivel === 0 ? colorBase() : color);
+
+    }
+
+    function restablecerFondo() {
+
+        pintarFondo(colorBase());
+
+        if (elCard) {
+            elCard.style.boxShadow = "";
+        }
+
+    }
+
+    inputPassword.addEventListener("input", actualizar);
+
+    // "change" cubre el autocompletado y los gestores de contraseñas,
+    // que a veces no disparan "input".
+
+    inputPassword.addEventListener("change", actualizar);
+
+
+    // ---------- Integración con el resto de la página ----------
+
+    document.querySelectorAll(".nav-link").forEach(function (enlace) {
+
+        enlace.addEventListener("click", function () {
+
+            if (enlace.getAttribute("data-target") === "view-registro") {
+                actualizar();
+            } else {
+                restablecerFondo();
+            }
+
+        });
+
+    });
+
+    const formRegistro = document.getElementById("form-registro");
+
+    if (formRegistro) {
+
+        formRegistro.addEventListener("reset", function () {
+            setTimeout(actualizar, 0);
+        });
+
+        // Bloquea el registro si la contraseña no llega al nivel mínimo.
+        // Se ejecuta antes que el envío original de login.js.
+
+        formRegistro.addEventListener("submit", function (evento) {
+
+            if (inputPassword.value && nivelActual < NIVEL_MINIMO) {
+
+                evento.preventDefault();
+                evento.stopImmediatePropagation();
+
+                if (typeof mostrarToast === "function") {
+                    mostrarToast("Tu contraseña es muy débil. Hazla más larga o añade símbolos.");
+                }
+
+            }
+
+        }, true);
+
+    }
+
+    // Al cambiar de tema se repinta todo con los colores del tema nuevo
+
+    new MutationObserver(function () {
+
+        const vistaRegistro = document.getElementById("view-registro");
+
+        if (vistaRegistro && vistaRegistro.classList.contains("active")) {
+            actualizar();
+        } else {
+            restablecerFondo();
+        }
+
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-tema"] });
+
+    pintarArco();
+    actualizar();
+
+    console.log("[pw] Medidor de contraseña activo.");
 
 })();

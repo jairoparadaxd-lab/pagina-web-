@@ -1,0 +1,508 @@
+/* ============================= */
+/* BOTÓN DE CAMBIO DE TEMA */
+/* ============================= */
+
+.tema-toggle {
+    position: fixed;
+
+    top: 20px;
+    right: 20px;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #161b22;
+
+    border: 1px solid #21262d;
+    border-radius: 50%;
+
+    color: #ffb340;
+
+    cursor: pointer;
+
+    z-index: 1500;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tema-toggle:hover {
+    transform: translateY(-2px);
+
+    border-color: #e10600;
+}
+
+.tema-toggle svg {
+    display: block;
+}
+
+.tema-toggle .icono-luna {
+    display: none;
+}
+
+/* En tema oscuro se muestra el sol (para pasar a claro) */
+
+.tema-toggle .icono-sol {
+    display: block;
+}
+
+@media (max-width: 600px) {
+
+    .tema-toggle {
+        top: 12px;
+        right: 12px;
+    }
+
+}
+
+
+/* ============================= */
+/* INSTITUCIÓN: asegurar que se vea para Director */
+/* ============================= */
+
+#grupo-institucion:not([hidden]) {
+    display: block;
+}
+
+
+/* ============================= */
+/* TEMA CLARO */
+/* Letra negra sobre fondos claros */
+/* ============================= */
+
+[data-tema="light"] .login-body {
+    /* Crema rosado cálido: ni blanco frío ni oscuro. El JS del medidor
+       pinta encima los degradados de color según la fuerza. */
+    background-color: #f6e9e6;
+
+    background-image:
+        radial-gradient(circle at 0% 100%, rgba(224, 92, 80, 0.45), transparent 62%),
+        radial-gradient(circle at 100% 0%, rgba(224, 92, 80, 0.32), transparent 58%),
+        radial-gradient(circle at 100% 100%, rgba(224, 92, 80, 0.4), transparent 62%),
+        radial-gradient(circle at 0% 0%, rgba(168, 78, 88, 0.3), transparent 55%);
+
+    color: #000000;
+
+    transition: background-color 0.4s ease;
+}
+
+[data-tema="light"] .tema-toggle {
+    background-color: #ffffff;
+
+    border-color: #d0d7de;
+
+    color: #1f2328;
+}
+
+[data-tema="light"] .tema-toggle .icono-sol {
+    display: none;
+}
+
+[data-tema="light"] .tema-toggle .icono-luna {
+    display: block;
+}
+
+/* Tarjeta */
+
+[data-tema="light"] .auth-card {
+    background-color: rgba(255, 252, 251, 0.9);
+
+    transition: box-shadow 0.5s ease;
+
+    border-color: #d0d7de;
+
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+}
+
+/* Textos */
+
+[data-tema="light"] .auth-title,
+[data-tema="light"] label,
+[data-tema="light"] .phone-code-option .phone-code-option-pais,
+[data-tema="light"] .inst-opcion-nombre,
+[data-tema="light"] .toast {
+    color: #000000;
+}
+
+[data-tema="light"] .auth-subtitle,
+[data-tema="light"] .auth-switch,
+[data-tema="light"] .auth-terms,
+[data-tema="light"] .phone-code-option .phone-code-option-codigo,
+[data-tema="light"] .inst-opcion-meta,
+[data-tema="light"] .inst-vacio,
+[data-tema="light"] .phone-code-arrow {
+    color: #424a53;
+}
+
+[data-tema="light"] .form-hint-neutral,
+[data-tema="light"] .auth-footer-tags {
+    color: #57606a;
+}
+
+[data-tema="light"] .form-hint {
+    color: #1a7f37;
+}
+
+[data-tema="light"] .form-hint.form-hint-neutral {
+    color: #57606a;
+}
+
+[data-tema="light"] .form-hint-error {
+    color: #cf222e;
+}
+
+[data-tema="light"] .auth-footer-tags {
+    border-top-color: #d0d7de;
+}
+
+/* Campos */
+
+[data-tema="light"] input[type="text"],
+[data-tema="light"] input[type="email"],
+[data-tema="light"] input[type="password"],
+[data-tema="light"] input[type="date"],
+[data-tema="light"] input[type="tel"],
+[data-tema="light"] select {
+    background-color: #ffffff;
+
+    border-color: #c7cdd4;
+
+    color: #000000;
+}
+
+[data-tema="light"] input[type="date"] {
+    color-scheme: light;
+}
+
+[data-tema="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none;
+}
+
+[data-tema="light"] input::placeholder {
+    color: #8c959f;
+}
+
+[data-tema="light"] input:focus,
+[data-tema="light"] select:focus {
+    border-color: #e10600;
+
+    background-color: #fff8f7;
+}
+
+[data-tema="light"] .form-group.campo-invalido input,
+[data-tema="light"] .form-group.campo-invalido select {
+    border-color: #e10600;
+}
+
+/* Ojo de contraseña y botón de ayuda */
+
+[data-tema="light"] .toggle-password {
+    color: #57606a;
+}
+
+[data-tema="light"] .toggle-password:hover {
+    color: #000000;
+}
+
+[data-tema="light"] .help-fab {
+    background-color: #ffffff;
+
+    border-color: #d0d7de;
+
+    color: #424a53;
+}
+
+[data-tema="light"] .help-fab:hover {
+    background-color: #f0f2f4;
+
+    color: #000000;
+}
+
+/* Enlaces */
+
+[data-tema="light"] .nav-link,
+[data-tema="light"] .auth-switch a,
+[data-tema="light"] .terminos-link {
+    color: #c40500;
+}
+
+[data-tema="light"] .nav-link:hover,
+[data-tema="light"] .auth-switch a:hover,
+[data-tema="light"] .terminos-link:hover {
+    color: #8f0400;
+}
+
+[data-tema="light"] .back-link {
+    color: #424a53 !important;
+}
+
+[data-tema="light"] .back-link:hover {
+    color: #000000 !important;
+}
+
+/* Pestañas */
+
+[data-tema="light"] .auth-tabs {
+    border-bottom-color: #d0d7de;
+}
+
+[data-tema="light"] .auth-tab {
+    color: #424a53;
+}
+
+[data-tema="light"] .auth-tab:hover {
+    color: #000000;
+}
+
+[data-tema="light"] .auth-tab.activo {
+    background-color: rgba(225, 6, 0, 0.1);
+
+    color: #b40500;
+}
+
+[data-tema="light"] .auth-tabs-pill {
+    background-color: #eef0f2;
+
+    border-color: #d0d7de;
+}
+
+[data-tema="light"] .auth-tabs-pill .auth-tab.activo {
+    background-color: rgba(225, 6, 0, 0.12);
+
+    border-color: rgba(225, 6, 0, 0.4);
+}
+
+/* Alerta */
+
+[data-tema="light"] .auth-alert {
+    background-color: rgba(225, 6, 0, 0.08);
+
+    color: #a40e0e;
+}
+
+/* Selector de país */
+
+[data-tema="light"] .phone-code-btn {
+    background-color: #ffffff;
+
+    border-color: #c7cdd4;
+
+    color: #000000;
+}
+
+[data-tema="light"] .phone-code-btn:hover,
+[data-tema="light"] .phone-code-select.abierto .phone-code-btn {
+    background-color: #fff8f7;
+
+    border-color: #e10600;
+}
+
+[data-tema="light"] .phone-code-list,
+[data-tema="light"] .inst-lista {
+    background-color: #ffffff;
+
+    border-color: #d0d7de;
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+}
+
+[data-tema="light"] .phone-code-option:hover,
+[data-tema="light"] .phone-code-option.resaltado,
+[data-tema="light"] .inst-opcion:hover,
+[data-tema="light"] .inst-opcion.resaltado {
+    background-color: #f0f2f4;
+}
+
+/* Institución educativa */
+
+[data-tema="light"] .inst-manual {
+    background-color: rgba(0, 0, 0, 0.02);
+
+    border-color: #d0d7de;
+}
+
+[data-tema="light"] .inst-check,
+[data-tema="light"] .inst-check span {
+    color: #000000;
+}
+
+[data-tema="light"] .inst-badge {
+    background-color: rgba(225, 6, 0, 0.1);
+
+    color: #b40500;
+}
+
+/* Toast */
+
+[data-tema="light"] .toast {
+    background-color: #ffffff;
+
+    border-color: #d0d7de;
+    border-left-color: #e10600;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Otros componentes (clases tomadas de tu JS/HTML; ajusta si tus CSS usan otras) */
+
+[data-tema="light"] .fecha-popup,
+[data-tema="light"] .pw-meter,
+[data-tema="light"] .ver-metodo,
+[data-tema="light"] .ver-sms {
+    background-color: #ffffff;
+
+    border-color: #d0d7de;
+
+    color: #000000;
+}
+
+[data-tema="light"] .fecha-dia,
+[data-tema="light"] .fecha-anio,
+[data-tema="light"] .fecha-nav,
+[data-tema="light"] .fecha-titulo,
+[data-tema="light"] .pw-label,
+[data-tema="light"] .pw-msg,
+[data-tema="light"] .pw-reqs li,
+[data-tema="light"] .ver-metodo-titulo,
+[data-tema="light"] .ver-metodo-destino,
+[data-tema="light"] .ver-estado,
+[data-tema="light"] .ver-reenviar,
+[data-tema="light"] .terminos-check label,
+[data-tema="light"] .terminos-check span {
+    color: #000000;
+}
+
+[data-tema="light"] .ver-slot {
+    background-color: #ffffff;
+
+    border-color: #c7cdd4;
+
+    color: #000000;
+}
+
+
+/* ============================= */
+/* MEDIDOR DE CONTRASEÑA (tema claro) */
+/* El JS pinta el color según la fuerza; aquí van las bases. */
+/* ============================= */
+
+[data-tema="light"] .pw-meter {
+    background-color: rgba(255, 255, 255, 0.75);
+
+    border-color: #d6c4c0;
+
+    transition: border-color 0.5s ease, background-color 0.5s ease;
+}
+
+[data-tema="light"] .pw-row,
+[data-tema="light"] .pw-msg {
+    color: #3d444d;
+}
+
+[data-tema="light"] .pw-bar {
+    background-color: #e6d9d6;
+
+    height: 8px;
+}
+
+[data-tema="light"] .pw-bar::after {
+    background:
+        linear-gradient(#fff, #fff) 37% 0 / 2px 100% no-repeat,
+        linear-gradient(#fff, #fff) 66% 0 / 2px 100% no-repeat,
+        linear-gradient(#fff, #fff) 88% 0 / 2px 100% no-repeat;
+}
+
+[data-tema="light"] .pw-lock .pw-keyhole {
+    fill: #ffffff;
+}
+
+[data-tema="light"] .pw-reqs li {
+    color: #57606a;
+
+    border-color: #cdbab6;
+}
+
+[data-tema="light"] .pw-fill {
+    transition: width 0.45s ease, background-color 0.6s ease;
+}
+
+
+/* ============================= */
+/* TÉRMINOS Y CONDICIONES (tema claro) */
+/* ============================= */
+
+[data-tema="light"] .auth-terms {
+    color: #424a53;
+}
+
+[data-tema="light"] .terminos-check label,
+[data-tema="light"] .terminos-modal-check {
+    color: #000000;
+}
+
+[data-tema="light"] .terminos-overlay {
+    background-color: rgba(60, 25, 28, 0.45);
+}
+
+[data-tema="light"] .terminos-modal {
+    background-color: #fffaf9;
+
+    border-color: rgba(200, 40, 30, 0.4);
+
+    box-shadow: 0 30px 70px rgba(80, 20, 20, 0.28);
+}
+
+[data-tema="light"] .terminos-cabecera,
+[data-tema="light"] .terminos-pie {
+    border-color: #e6d5d1;
+}
+
+[data-tema="light"] .terminos-cabecera svg {
+    color: #c40500;
+}
+
+[data-tema="light"] .terminos-cabecera h2,
+[data-tema="light"] .terminos-cuerpo h3 {
+    color: #000000;
+}
+
+[data-tema="light"] .terminos-cabecera p {
+    color: #57606a;
+}
+
+[data-tema="light"] .terminos-cuerpo p {
+    color: #2d333b;
+}
+
+[data-tema="light"] .terminos-cuerpo {
+    scrollbar-color: #c9b3ae #f3e6e3;
+}
+
+[data-tema="light"] .terminos-modal-check strong {
+    color: #b40500;
+}
+
+[data-tema="light"] .terminos-aceptar:disabled {
+    background: #e6d9d6;
+
+    color: #8c7f7d;
+}
+
+[data-tema="light"] .terminos-rechazar {
+    background-color: #ffffff;
+
+    border-color: #d6c4c0;
+
+    color: #000000;
+}
+
+[data-tema="light"] .terminos-rechazar:hover {
+    background-color: #f6e9e6;
+}

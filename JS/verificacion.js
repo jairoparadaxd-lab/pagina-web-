@@ -14,7 +14,7 @@
     // ---- Configuración ----
 
     // En producción cambia esta URL por la de tu servidor desplegado
-    const API = "http://localhost:3000";
+    const API = "https://truelock.onrender.com";
 
     const LONGITUD = 4;
     const SEGUNDOS_REENVIO = 62; // el servidor exige 60 s entre códigos

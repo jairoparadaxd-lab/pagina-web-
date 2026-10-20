@@ -129,6 +129,56 @@ const traducciones = {
         "footer-p2": "Project developed by apprentices.",
         "alert-descarga": "The TRUE LOCK download will be available soon."
 
+    },
+
+    pt: {
+
+        "nav-inicio": "Início",
+        "nav-mision": "Missão",
+        "nav-vision": "Visão",
+        "nav-actualizaciones": "Atualizações",
+        "nav-descargar": "Baixar",
+        "nav-registro": "Registrar-se",
+
+        "btn-modo-oscuro": "Modo escuro",
+        "btn-modo-claro": "Modo claro",
+
+        "btn-musica-off": "Música desativada",
+        "btn-musica-on": "Música ativada",
+
+        "inicio-h2": "Controle seu ambiente. Foque no que é importante.",
+        "inicio-p":
+            "Bem-vindo ao site oficial do TRUE LOCK, um projeto desenvolvido por aprendizes com o objetivo de ajudar a melhorar a concentração, a produtividade e o controle sobre as distrações digitais.",
+        "inicio-btn1": "Conheça o TRUE LOCK",
+        "inicio-btn2": "Baixar",
+
+        "nosotros-h2": "Quem somos?",
+        "nosotros-p1":
+            "Somos um grupo de aprendizes de uma das instituições mais reconhecidas do país no desenvolvimento de software, focados na criação de soluções tecnológicas para problemas presentes em nosso meio. Assim nasce a T.S Solutions.",
+        "nosotros-p2": "O TRUE LOCK nasce como um dos nossos projetos principais.",
+        "nosotros-p3":
+            "Nasce com o objetivo de atender a uma necessidade presente em um ambiente digital tão amplo como o atual: a possibilidade de impor um limite ou restrição às ferramentas do âmbito profissional e educacional, eliminando páginas e programas inúteis para esses âmbitos, como IA, jogos, redes sociais, etc.",
+
+        "mision-h2": "Missão",
+        "mision-p":
+            "Desenvolver soluções tecnológicas que ajudem pessoas e organizações a controlar as distrações digitais, melhorar sua concentração e aproveitar de forma mais eficiente as ferramentas tecnológicas em ambientes educacionais e profissionais.",
+
+        "vision-h2": "Visão",
+
+        "actualizaciones-titulo": "Atualizações",
+        "actualizaciones-subtitulo": "Conheça as versões disponíveis do TRUE LOCK.",
+        "beta": "Beta",
+        "actualizaciones-version": "V1.0",
+        "actualizaciones-descripcion":
+            "O início de tudo, uma versão com várias funções, como o bloqueio, a criação de perfis e o gerenciamento das páginas web.",
+        "actualizaciones-boton": "Baixar V1.0",
+
+        "descargar-h2": "Baixar TRUE LOCK",
+        "descargar-btn": "Baixar TRUE LOCK",
+
+        "footer-p2": "Projeto desenvolvido por aprendizes.",
+        "alert-descarga": "O download do TRUE LOCK estará disponível em breve."
+
     }
 
 };
@@ -141,7 +191,10 @@ const visionTextos = {
         "Ser reconocidos en <strong>2030</strong> como el software ejecutable líder en gestión de productividad digital y control de accesos web para el sector educativo y empresarial en el país, destacándonos por nuestra seguridad, adaptabilidad y por transformar entornos hiperconectados en espacios de máxima concentración y eficiencia.",
 
     en:
-        "To be recognized by <strong>2030</strong> as the leading executable software for digital productivity management and web access control for the educational and business sectors in the country, standing out for our security, adaptability, and for transforming hyperconnected environments into spaces of maximum concentration and efficiency."
+        "To be recognized by <strong>2030</strong> as the leading executable software for digital productivity management and web access control for the educational and business sectors in the country, standing out for our security, adaptability, and for transforming hyperconnected environments into spaces of maximum concentration and efficiency.",
+
+    pt:
+        "Ser reconhecidos em <strong>2030</strong> como o software executável líder em gestão de produtividade digital e controle de acesso web para o setor educacional e empresarial do país, destacando-nos pela nossa segurança, adaptabilidade e por transformar ambientes hiperconectados em espaços de máxima concentração e eficiência."
 
 };
 
@@ -150,15 +203,32 @@ const visionTextos = {
 /* IDIOMA ACTUAL */
 /* ============================= */
 
+// orden de rotación del botón de idioma
+const ORDEN_IDIOMAS = ["es", "en", "pt"];
+
+const NOMBRE_IDIOMA = {
+    es: "Español",
+    en: "English",
+    pt: "Português"
+};
+
 let idiomaActual = localStorage.getItem("idioma") || "es";
 
+// si el localStorage tiene un valor inválido, vuelve a español
+if (!traducciones[idiomaActual]) idiomaActual = "es";
+
+function idiomaSiguiente() {
+    const i = ORDEN_IDIOMAS.indexOf(idiomaActual);
+    return ORDEN_IDIOMAS[(i + 1) % ORDEN_IDIOMAS.length];
+}
 
 function actualizarBotonIdioma() {
     const botonIdioma = document.getElementById("boton-idioma");
     if (!botonIdioma) return;
     const etiqueta = botonIdioma.querySelector(".btn-label");
     if (!etiqueta) return;
-    etiqueta.textContent = idiomaActual === "es" ? "English" : "Español";
+    // muestra el idioma al que cambiará al hacer click
+    etiqueta.textContent = NOMBRE_IDIOMA[idiomaSiguiente()];
 }
 
 function aplicarVision(idioma) {
@@ -179,6 +249,8 @@ function aplicarTraducciones(idioma) {
         }
     });
 
+    document.documentElement.lang = idioma;
+
     aplicarVision(idioma);
     actualizarBotonIdioma();
 }
@@ -187,12 +259,74 @@ const botonIdioma = document.getElementById("boton-idioma");
 
 if (botonIdioma) {
     botonIdioma.addEventListener("click", function () {
-        idiomaActual = idiomaActual === "es" ? "en" : "es";
+        idiomaActual = idiomaSiguiente();
         localStorage.setItem("idioma", idiomaActual);
+        reproducirSonidoIdioma(idiomaActual);   // efecto + voz del idioma seleccionado
         aplicarTraducciones(idiomaActual);
         actualizarBotonTema();
-        actualizarBotonMusica();
+        if (typeof actualizarBotonMusica === "function") actualizarBotonMusica();
+        actualizarCopyright();
     });
+}
+
+
+/* ============================= */
+/* SONIDOS (carpeta MUSICA) */
+/* ============================= */
+
+// si tus archivos no son .mp3, cambia la extensión aquí
+const RUTA_SONIDO_TRANSICION = "MUSICA/transicion.mp3";
+const RUTA_SONIDO_TEMA = "MUSICA/tema.mp3";
+
+const sonidoTransicion = new Audio(RUTA_SONIDO_TRANSICION);
+const sonidoTema = new Audio(RUTA_SONIDO_TEMA);
+
+// sonidos del cambio de idioma: un efecto + la voz del idioma seleccionado
+const RUTA_SONIDO_IDIOMA = "MUSICA/idioma.mp3";
+const RUTA_VOZ_IDIOMA = {
+    es: "MUSICA/espa.mp3",
+    en: "MUSICA/ingl.mp3",
+    pt: "MUSICA/portu.mp3"
+};
+
+// milisegundos de espera entre el efecto y la voz
+// (0 = suenan al mismo tiempo; sube el valor si quieres que la voz entre después)
+const RETRASO_VOZ_IDIOMA = 0;
+
+const sonidoIdioma = new Audio(RUTA_SONIDO_IDIOMA);
+const vocesIdioma = {};
+Object.keys(RUTA_VOZ_IDIOMA).forEach(function (codigo) {
+    vocesIdioma[codigo] = new Audio(RUTA_VOZ_IDIOMA[codigo]);
+    vocesIdioma[codigo].preload = "auto";
+});
+
+sonidoTransicion.preload = "auto";
+sonidoTema.preload = "auto";
+sonidoIdioma.preload = "auto";
+
+function reproducirSonido(audio) {
+    try {
+        audio.currentTime = 0; // reinicia por si se activa seguido
+        const promesa = audio.play();
+        // los navegadores pueden bloquear el audio; se ignora el error en silencio
+        if (promesa && promesa.catch) promesa.catch(function () {});
+    } catch (e) {}
+}
+
+// efecto de idioma + voz del idioma que se acaba de seleccionar
+function reproducirSonidoIdioma(codigoIdioma) {
+    reproducirSonido(sonidoIdioma);
+
+    const voz = vocesIdioma[codigoIdioma];
+    if (!voz) return;
+
+    if (RETRASO_VOZ_IDIOMA > 0) {
+        setTimeout(function () {
+            reproducirSonido(voz);
+        }, RETRASO_VOZ_IDIOMA);
+    } else {
+        reproducirSonido(voz);
+    }
 }
 
 
@@ -417,6 +551,8 @@ function actualizarBotonTema() {
         animando = true;
         inicioFase = performance.now();
 
+        reproducirSonido(sonidoTema);   // sonido del cambio de tema
+
         if (modoClaroActual) {
             // va de claro a oscuro: el muñequito camina desde la
             // perilla y cae en el agujero
@@ -437,75 +573,6 @@ function actualizarBotonTema() {
         iniciarAnimacion(document.body.classList.contains("modo-claro"));
     });
 })();
-
-
-/* ============================= */
-/* MÚSICA (ya no se corta al cambiar de "página") */
-/* ============================= */
-
-const botonMusica = document.getElementById("boton-musica");
-const musica = document.getElementById("musica-fondo");
-const musicaGuardada = localStorage.getItem("musica");
-
-function actualizarBotonMusica() {
-    if (!botonMusica) return;
-
-    const etiqueta = botonMusica.querySelector(".btn-label");
-    const musicaActiva = musica && !musica.paused;
-
-    // el ícono ahora es un SVG (altavoz + ondas), no un emoji:
-    // estas clases controlan qué partes del SVG se ven y disparan
-    // las animaciones (ondas pulsando / tachón al silenciar)
-    botonMusica.classList.toggle("reproduciendo", musicaActiva);
-
-    if (!musicaActiva) {
-        // se reinicia la animación de "silenciado" cada vez que se
-        // pausa, incluso si ya estaba silenciado antes
-        botonMusica.classList.remove("silenciado");
-        void botonMusica.offsetWidth; // fuerza el reflow para poder repetir la animación
-        botonMusica.classList.add("silenciado");
-    } else {
-        botonMusica.classList.remove("silenciado");
-    }
-
-    if (etiqueta) {
-        etiqueta.textContent = musicaActiva
-            ? traducciones[idiomaActual]["btn-musica-on"]
-            : traducciones[idiomaActual]["btn-musica-off"];
-    }
-}
-
-if (musicaGuardada === "encendida" && musica) {
-    musica.volume = 0.5;
-    musica.play()
-        .then(actualizarBotonMusica)
-        .catch(function () {
-            actualizarBotonMusica();
-            console.log("El navegador bloqueó la reproducción automática.");
-        });
-} else {
-    actualizarBotonMusica();
-}
-
-if (botonMusica && musica) {
-    botonMusica.addEventListener("click", function () {
-        if (musica.paused) {
-            musica.volume = 0.5;
-            musica.play()
-                .then(function () {
-                    localStorage.setItem("musica", "encendida");
-                    actualizarBotonMusica();
-                })
-                .catch(function () {
-                    console.log("No fue posible reproducir la música.");
-                });
-        } else {
-            musica.pause();
-            localStorage.setItem("musica", "apagada");
-            actualizarBotonMusica();
-        }
-    });
-}
 
 
 /* ============================= */
@@ -530,13 +597,14 @@ function actualizarCopyright() {
     const copyright = document.getElementById("copyright");
     if (!copyright) return;
 
+    const textos = {
+        es: "Todos los derechos reservados.",
+        en: "All rights reserved.",
+        pt: "Todos os direitos reservados."
+    };
+
     const año = new Date().getFullYear();
-    copyright.innerHTML =
-        `&copy; ${año} T.S SOLUTIONS. ${
-            idiomaActual === "es"
-                ? "Todos los derechos reservados."
-                : "All rights reserved."
-        }`;
+    copyright.innerHTML = `&copy; ${año} T.S SOLUTIONS. ${textos[idiomaActual]}`;
 }
 
 
@@ -551,6 +619,11 @@ const todosLosEnlacesPagina = document.querySelectorAll('[data-pagina]');
 const paginasValidas = ["inicio", "mision", "vision", "actualizaciones", "descargar"];
 
 const anillo = document.getElementById("anillo-neon");
+
+// pestaña que se está mostrando y estado de la transición (0.8s)
+let paginaActual = null;
+let transicionEnCurso = false;
+const capaTransicion = document.getElementById("transicion");
 
 const coloresNeon = {
     rojo: "var(--neon-rojo)",
@@ -585,11 +658,83 @@ function moverAnillo(enlace, animar) {
     }
 }
 
+
+/* ============================= */
+/* COLOR DE ACENTO + LOGO POR PÁGINA */
+/* ============================= */
+
+// qué color le corresponde a cada página
+const ACENTO_POR_PAGINA = {
+    inicio: "rojo",
+    mision: "azul",
+    vision: "morado",
+    actualizaciones: "amarillo",
+    descargar: "rojo"
+};
+
+// nombres de tus imágenes (están en la misma carpeta que el logo normal).
+// rojo = null porque usa el logo normal que ya está en el HTML.
+// ⚠️ Si tus archivos se llaman distinto (ej. "logo-azul.png"), cámbialos aquí.
+const LOGOS_POR_ACENTO = {
+    rojo: null,
+    azul: "logo azul.png",
+    morado: "logo morado.png",
+    amarillo: "logo amarillo.png"
+};
+
+const logoImg = document.querySelector(".logo img");
+const logoOriginal = logoImg ? logoImg.getAttribute("src") : "";
+const carpetaLogos = logoOriginal.substring(0, logoOriginal.lastIndexOf("/") + 1);
+
+function rutaLogo(acento) {
+    const nombre = LOGOS_POR_ACENTO[acento];
+    return nombre ? carpetaLogos + encodeURIComponent(nombre) : logoOriginal;
+}
+
+// precargar los logos para que el cambio sea instantáneo
+Object.keys(LOGOS_POR_ACENTO).forEach(function (acento) {
+    const img = new Image();
+    img.src = rutaLogo(acento);
+});
+
+function cambiarLogo(ruta, animar) {
+    if (!logoImg || logoImg.getAttribute("src") === ruta) return;
+
+    function poner() {
+        // si la imagen no existe, vuelve al logo normal en vez de quedar rota
+        logoImg.onerror = function () {
+            logoImg.onerror = null;
+            logoImg.src = logoOriginal;
+        };
+        logoImg.src = ruta;
+        logoImg.style.opacity = "1";
+    }
+
+    if (!animar) {
+        poner();
+        return;
+    }
+
+    logoImg.style.opacity = "0";
+    setTimeout(poner, 180);
+}
+
+function aplicarAcento(id, animar) {
+    const acento = ACENTO_POR_PAGINA[id] || "rojo";
+    document.body.dataset.acento = acento;
+    cambiarLogo(rutaLogo(acento), animar);
+}
+
+
 function mostrarPagina(id, animarAnillo) {
 
     if (!paginasValidas.includes(id)) {
         id = "inicio";
     }
+
+    paginaActual = id;
+
+    aplicarAcento(id, animarAnillo);
 
     paginas.forEach(function (seccion) {
         seccion.classList.toggle(
@@ -614,12 +759,76 @@ function mostrarPagina(id, animarAnillo) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function navegarA(id, agregarHistorial) {
-    if (agregarHistorial) {
-        history.pushState(null, "", "#" + id);
+
+/* ============================= */
+/* TRANSICIÓN ENTRE PESTAÑAS (0.8s) */
+/* barrido: color actual → negro → color nuevo, con el logo */
+/* FOURBEST en la esquina derecha (ver CSS .transicion) */
+/* ============================= */
+
+// duración total de la transición en milisegundos (prueba 700 u 800)
+const DURACION_TRANSICION = 800;
+
+if (capaTransicion) {
+    capaTransicion.style.setProperty("--tr-dur", DURACION_TRANSICION + "ms");
+}
+
+/* cambio(animado): se ejecuta con la pantalla tapada.
+   animado = false cuando hay transición → el color de acento, el logo
+   y el anillo cambian al instante, para que no se vean cambiar */
+function ejecutarTransicion(cambio, idDestino) {
+    const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // sin capa, sin pestaña previa o con movimiento reducido: cambio directo
+    if (!capaTransicion || !paginaActual || reducir) {
+        cambio(true);
+        return;
     }
-    mostrarPagina(id, true);
-    cerrarMenu();
+
+    if (transicionEnCurso) return;
+    transicionEnCurso = true;
+
+    const viejo = ACENTO_POR_PAGINA[paginaActual] || "rojo";
+    const nuevo = ACENTO_POR_PAGINA[idDestino] || "rojo";
+
+    capaTransicion.style.setProperty("--tr-viejo", coloresNeon[viejo]);
+    capaTransicion.style.setProperty("--tr-nuevo", coloresNeon[nuevo]);
+
+    // reinicia la animación aunque se repita seguido
+    capaTransicion.classList.remove("activa");
+    void capaTransicion.offsetWidth;
+    capaTransicion.classList.add("activa");
+
+    reproducirSonido(sonidoTransicion);   // sonido de la transición entre pestañas
+
+    // a la mitad la pantalla está tapada: aquí se cambia la pestaña
+    setTimeout(function () {
+        document.body.classList.add("tr-instantaneo");
+        cambio(false);
+    }, DURACION_TRANSICION / 2);
+
+    setTimeout(function () {
+        capaTransicion.classList.remove("activa");
+        document.body.classList.remove("tr-instantaneo");
+        transicionEnCurso = false;
+    }, DURACION_TRANSICION);
+}
+
+function navegarA(id, agregarHistorial) {
+    if (!paginasValidas.includes(id)) id = "inicio";
+
+    if (id === paginaActual) {
+        cerrarMenu();
+        return;
+    }
+
+    ejecutarTransicion(function (animado) {
+        if (agregarHistorial) {
+            history.pushState(null, "", "#" + id);
+        }
+        mostrarPagina(id, animado);
+        cerrarMenu();
+    }, id);
 }
 
 todosLosEnlacesPagina.forEach(function (enlace) {
@@ -631,7 +840,9 @@ todosLosEnlacesPagina.forEach(function (enlace) {
 
 window.addEventListener("popstate", function () {
     const id = location.hash.replace("#", "") || "inicio";
-    mostrarPagina(id, true);
+    ejecutarTransicion(function (animado) {
+        mostrarPagina(id, animado);
+    }, id);
 });
 
 
