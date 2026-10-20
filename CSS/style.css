@@ -2373,9 +2373,10 @@ body.tr-instantaneo * {
     transition: none !important;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .transicion { display: none; }
-}
+/* (se eliminó el bloque prefers-reduced-motion que ocultaba .transicion:
+   era la causa de que la transición no se viera en algunos equipos) */
+
+
 /* ============================================================ */
 /* FLOTACIÓN SUAVE DE IMÁGENES Y LOGOS                          */
 /* (va al FINAL del CSS)                                        */
