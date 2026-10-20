@@ -277,9 +277,16 @@ if (botonIdioma) {
 // si tus archivos no son .mp3, cambia la extensión aquí
 const RUTA_SONIDO_TRANSICION = "MUSICA/transicion.mp3";
 const RUTA_SONIDO_TEMA = "MUSICA/tema.mp3";
+const RUTA_SONIDO_AMANECER = "MUSICA/amanecer.mp3";   // al pasar a tema claro
+const RUTA_SONIDO_NOCHE = "MUSICA/noche.mp3";         // al pasar a tema oscuro
 
 const sonidoTransicion = new Audio(RUTA_SONIDO_TRANSICION);
 const sonidoTema = new Audio(RUTA_SONIDO_TEMA);
+const sonidoAmanecer = new Audio(RUTA_SONIDO_AMANECER);
+const sonidoNoche = new Audio(RUTA_SONIDO_NOCHE);
+
+sonidoAmanecer.preload = "auto";
+sonidoNoche.preload = "auto";
 
 // sonidos del cambio de idioma: un efecto + la voz del idioma seleccionado
 const RUTA_SONIDO_IDIOMA = "MUSICA/idioma.mp3";
@@ -303,6 +310,23 @@ Object.keys(RUTA_VOZ_IDIOMA).forEach(function (codigo) {
 sonidoTransicion.preload = "auto";
 sonidoTema.preload = "auto";
 sonidoIdioma.preload = "auto";
+
+// VOLUMEN de cada sonido: va de 0 (silencio) a 1 (volumen máximo del archivo)
+const VOLUMEN_TRANSICION = 0.4;
+const VOLUMEN_TEMA = 0.4;
+const VOLUMEN_EFECTO_IDIOMA = 0.4;
+const VOLUMEN_VOZ_IDIOMA = 0.4;
+const VOLUMEN_AMANECER = 0.4;
+const VOLUMEN_NOCHE = 0.4;
+
+sonidoTransicion.volume = VOLUMEN_TRANSICION;
+sonidoTema.volume = VOLUMEN_TEMA;
+sonidoAmanecer.volume = VOLUMEN_AMANECER;
+sonidoNoche.volume = VOLUMEN_NOCHE;
+sonidoIdioma.volume = VOLUMEN_EFECTO_IDIOMA;
+Object.keys(vocesIdioma).forEach(function (codigo) {
+    vocesIdioma[codigo].volume = VOLUMEN_VOZ_IDIOMA;
+});
 
 function reproducirSonido(audio) {
     try {
@@ -556,11 +580,13 @@ function actualizarBotonTema() {
         if (modoClaroActual) {
             // va de claro a oscuro: el muñequito camina desde la
             // perilla y cae en el agujero
+            reproducirSonido(sonidoNoche);   // pasa a tema oscuro
             colorMuneco = colorParaFondo(false);
             fase = "camina_a_hueco";
         } else {
             // va de oscuro a claro: el muñequito sale del agujero
             // y camina de regreso a la perilla
+            reproducirSonido(sonidoAmanecer);   // pasa a tema claro
             colorMuneco = colorParaFondo(true);
             fase = "emerge";
         }

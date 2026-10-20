@@ -60,6 +60,96 @@
         "abcdefghijklmnopqrstuvwxyz", "0123456789", "qwertyuiop", "asdfghjkl", "zxcvbnm"
     ];
 
+
+    // ---------- Sonidos por nivel (carpeta MUSICA) ----------
+    // Un sonido por cada nivel. Suena cuando la persona termina de escribir.
+    // Si tus archivos no son .mp3, cambia la extensión aquí.
+
+    const SONIDOS_NIVEL = {
+        1: "MUSICA/debil.mp3",
+        2: "MUSICA/media.mp3",
+        3: "MUSICA/fuerte.mp3",
+        4: "MUSICA/excelente.mp3"
+    };
+
+    // volumen de 0 (silencio) a 1 (máximo del archivo)
+    const VOLUMEN_NIVEL = 0.5;
+
+    // milisegundos sin escribir para considerar que "terminó de escribir"
+    const ESPERA_FIN_ESCRITURA = 700;
+
+    // true  = solo suena cuando el nivel cambia respecto al último sonido
+    // false = suena cada vez que termina de escribir
+    const SOLO_SI_CAMBIA_NIVEL = true;
+
+    const audiosNivel = {};
+
+    Object.keys(SONIDOS_NIVEL).forEach(function (clave) {
+
+        const audio = new Audio(SONIDOS_NIVEL[clave]);
+
+        audio.preload = "auto";
+        audio.volume = VOLUMEN_NIVEL;
+
+        audiosNivel[clave] = audio;
+
+    });
+
+    let temporizadorSonido = null;
+    let ultimoNivelSonado = 0;
+
+    function reproducirSonidoNivel(nivel) {
+
+        // corta cualquier sonido de nivel anterior para que no se mezclen
+        Object.keys(audiosNivel).forEach(function (clave) {
+            audiosNivel[clave].pause();
+        });
+
+        const audio = audiosNivel[nivel];
+
+        if (!audio) {
+            return;
+        }
+
+        try {
+            audio.currentTime = 0;
+            const promesa = audio.play();
+            // los navegadores pueden bloquear el audio; se ignora el error en silencio
+            if (promesa && promesa.catch) {
+                promesa.catch(function () {});
+            }
+        } catch (e) {}
+
+    }
+
+    function programarSonidoNivel() {
+
+        clearTimeout(temporizadorSonido);
+
+        temporizadorSonido = setTimeout(function () {
+
+            // contraseña vacía: se reinicia para que el próximo nivel vuelva a sonar
+            if (!inputPassword.value) {
+                ultimoNivelSonado = 0;
+                return;
+            }
+
+            if (nivelActual === 0) {
+                return;
+            }
+
+            if (SOLO_SI_CAMBIA_NIVEL && nivelActual === ultimoNivelSonado) {
+                return;
+            }
+
+            ultimoNivelSonado = nivelActual;
+            reproducirSonidoNivel(nivelActual);
+
+        }, ESPERA_FIN_ESCRITURA);
+
+    }
+
+
     const elBody = document.body;
     const elLabel = document.getElementById("pw-label");
     const elBits = document.getElementById("pw-bits");
@@ -366,6 +456,11 @@
     // que a veces no disparan "input".
 
     inputPassword.addEventListener("change", actualizar);
+
+    // sonido del nivel cuando termina de escribir (se registra después de
+    // "actualizar", así que el nivel ya está calculado cuando suena)
+
+    inputPassword.addEventListener("input", programarSonidoNivel);
 
 
     // ---------- Integración con el resto de la página ----------

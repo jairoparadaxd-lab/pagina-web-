@@ -1960,6 +1960,405 @@ if (botonAyuda) {
 
 
 // =============================
+// SONIDOS DEL LOGIN (carpeta MUSICA)
+// - Botones de tema:  oscuro -> noche   |  claro -> amanecer
+// - Botones de idioma: inglés -> ingl   |  español -> espa  |  portugués -> portu
+// - Comandos / inyección en cualquier campo -> mal
+// =============================
+
+(function () {
+
+    // ---------- Configuración ----------
+
+    const CARPETA = "MUSICA/";
+    const EXTENSION = ".mp3";   // si tus archivos no son .mp3, cámbialo aquí
+
+    // archivo (sin extensión) y volumen de 0 a 1
+    const SONIDOS = {
+        noche: { archivo: "noche", volumen: 0.4 },
+        amanecer: { archivo: "amanecer", volumen: 0.4 },
+        en: { archivo: "ingl", volumen: 0.5 },
+        es: { archivo: "espa", volumen: 0.5 },
+        pt: { archivo: "portu", volumen: 0.5 },
+        mal: { archivo: "mal", volumen: 0.6 }
+    };
+
+    // Si el sonido no se activa en algún botón, escribe aquí su selector CSS exacto.
+    // Ejemplos: "#btn-oscuro", ".btn-tema[data-modo='claro']", "#idioma-en"
+    // Déjalos vacíos ("") para que se detecten solos.
+    const SELECTORES = {
+        temaOscuro: "",
+        temaClaro: "",
+        temaAlternar: "",   // un solo botón que cambia entre oscuro y claro
+        idiomaEn: "",
+        idiomaEs: "",
+        idiomaPt: ""
+    };
+
+    // clase que tema.js le pone al <body> (o <html>) cuando el tema es claro
+    const CLASE_MODO_CLARO = "modo-claro";
+
+    // milisegundos mínimos entre dos sonidos "mal"
+    const ENFRIAMIENTO_MAL = 1500;
+
+
+    // ---------- Audio ----------
+
+    const audios = {};
+
+    Object.keys(SONIDOS).forEach(function (clave) {
+
+        const ruta = CARPETA + SONIDOS[clave].archivo + EXTENSION;
+        const audio = new Audio(ruta);
+
+        audio.preload = "auto";
+        audio.volume = SONIDOS[clave].volumen;
+
+        audio.addEventListener("error", function () {
+            console.warn("[Sonidos] No se pudo cargar: " + ruta);
+        });
+
+        audios[clave] = audio;
+
+    });
+
+    function reproducir(clave) {
+
+        const audio = audios[clave];
+
+        if (!audio) {
+            return;
+        }
+
+        try {
+            audio.currentTime = 0;
+            const promesa = audio.play();
+            if (promesa && promesa.catch) {
+                promesa.catch(function (e) {
+                    console.warn("[Sonidos] El navegador bloqueó '" + clave + "':", e && e.message);
+                });
+            }
+        } catch (e) { }
+
+    }
+
+
+    // ---------- Botones de tema e idioma ----------
+
+    function estadoClaro() {
+
+        const raiz = document.documentElement;
+        const cuerpo = document.body;
+
+        if (cuerpo.classList.contains(CLASE_MODO_CLARO) || raiz.classList.contains(CLASE_MODO_CLARO)) {
+            return true;
+        }
+
+        const attr = (
+            (raiz.getAttribute("data-theme") || "") + " " +
+            (raiz.getAttribute("data-tema") || "") + " " +
+            (cuerpo.getAttribute("data-theme") || "") + " " +
+            (cuerpo.getAttribute("data-tema") || "")
+        ).toLowerCase();
+
+        return /\b(light|claro)\b/.test(attr);
+
+    }
+
+    let claroSupuesto = false;
+
+    window.addEventListener("DOMContentLoaded", function () {
+        claroSupuesto = estadoClaro();
+    });
+
+    // Junta las pistas del botón: id, clases, data-*, lang, aria-label, título,
+    // texto corto y alt de imágenes (los textos largos se ignoran para no confundirse).
+    function pistas(el) {
+
+        const partes = [];
+
+        partes.push(el.id || "");
+
+        const clase = el.getAttribute("class");
+        if (clase) {
+            partes.push(clase);
+        }
+
+        Array.prototype.forEach.call(el.attributes, function (a) {
+
+            if (a.name.indexOf("data-") === 0 || a.name === "lang" || a.name === "hreflang" || a.name === "value") {
+                partes.push(a.value);
+            }
+
+            if (a.name === "aria-label" || a.name === "title") {
+                if (a.value.length <= 20) {
+                    partes.push(a.value);
+                }
+            }
+
+        });
+
+        const texto = (el.textContent || "").trim();
+
+        if (texto.length <= 20) {
+            partes.push(texto);
+        }
+
+        el.querySelectorAll("img[alt]").forEach(function (img) {
+            if (img.alt.length <= 20) {
+                partes.push(img.alt);
+            }
+        });
+
+        return " " + partes.join(" ").toLowerCase().replace(/[^a-záéíóúñü]+/g, " ") + " ";
+
+    }
+
+    function tiene(texto, palabras) {
+
+        return palabras.some(function (p) {
+            return texto.indexOf(" " + p + " ") !== -1;
+        });
+
+    }
+
+    function tieneRaiz(texto, raices) {
+
+        return raices.some(function (r) {
+            return texto.indexOf(r) !== -1;
+        });
+
+    }
+
+    function clasificarManual(t) {
+
+        const mapa = [
+            ["temaOscuro", "oscuro"],
+            ["temaClaro", "claro"],
+            ["temaAlternar", "alternar"],
+            ["idiomaEn", "en"],
+            ["idiomaEs", "es"],
+            ["idiomaPt", "pt"]
+        ];
+
+        for (let i = 0; i < mapa.length; i++) {
+
+            const sel = SELECTORES[mapa[i][0]];
+
+            if (sel && t.closest(sel)) {
+                return mapa[i][1];
+            }
+
+        }
+
+        return null;
+
+    }
+
+    function clasificarAuto(t) {
+
+        const el = t.closest("button, a, [role='button'], [role='menuitem'], [role='option'], li, label");
+
+        if (!el) {
+            return null;
+        }
+
+        // botones que no son ni de tema ni de idioma
+        if (el.matches(".toggle-password, [type='submit'], .phone-code-btn") || el.closest(".phone-code-list")) {
+            return null;
+        }
+
+        const p = pistas(el);
+
+        // Tema
+        if (tieneRaiz(p, ["oscuro", "noche"]) || tiene(p, ["dark", "moon", "luna", "night"])) {
+            return "oscuro";
+        }
+
+        if (tieneRaiz(p, ["amanecer"]) || tiene(p, ["claro", "light", "sun", "sol"])) {
+            return "claro";
+        }
+
+        if (tiene(p, ["tema", "theme", "modo", "mode"])) {
+            return "alternar";
+        }
+
+        // Idioma
+        if (tieneRaiz(p, ["ingl", "english"]) || tiene(p, ["en", "eng", "us", "gb"])) {
+            return "en";
+        }
+
+        if (tieneRaiz(p, ["espa", "spanish"]) || tiene(p, ["es", "esp", "spa"])) {
+            return "es";
+        }
+
+        if (tieneRaiz(p, ["portu"]) || tiene(p, ["pt", "por", "br"])) {
+            return "pt";
+        }
+
+        return null;
+
+    }
+
+    // fase de captura: suena aunque otro script detenga el evento
+    document.addEventListener("click", function (evento) {
+
+        const t = evento.target;
+
+        if (!t || !t.closest) {
+            return;
+        }
+
+        const tipo = clasificarManual(t) || clasificarAuto(t);
+
+        if (!tipo) {
+            return;
+        }
+
+        if (tipo === "oscuro") {
+            claroSupuesto = false;
+            reproducir("noche");
+            return;
+        }
+
+        if (tipo === "claro") {
+            claroSupuesto = true;
+            reproducir("amanecer");
+            return;
+        }
+
+        if (tipo === "alternar") {
+
+            // se espera a que tema.js aplique el cambio y se lee el resultado
+            setTimeout(function () {
+
+                const leido = estadoClaro();
+
+                claroSupuesto = (leido !== claroSupuesto) ? leido : !claroSupuesto;
+
+                reproducir(claroSupuesto ? "amanecer" : "noche");
+
+            }, 80);
+
+            return;
+
+        }
+
+        reproducir(tipo);   // en / es / pt
+
+    }, true);
+
+
+    // ---------- Intentos de comandos / hackeo (cualquier campo) ----------
+
+    // Texto normal: se revisa con todos los patrones.
+    const PATRONES_TEXTO = [
+        /[<>]/,                                            // etiquetas HTML
+        /`/,                                               // sustitución de comandos
+        /\$\(|\$\{|\{\{/,                                  // $(cmd), ${var}, {{plantilla}}
+        /;|\|\||&&|\|/,                                    // encadenar comandos
+        /['"]\s*(--|#|;|\bor\b|\band\b)/i,                 // ' OR ..., '; --
+        /\b(or|and)\b\s+['"]?\d+['"]?\s*=\s*['"]?\d+/i,    // OR 1=1
+        /\b(union\s+select|drop\s+table|insert\s+into|delete\s+from|select\s+.+\s+from)\b/i,
+        /\/\*|\*\//,                                       // comentarios SQL
+        /\.\.[\/\\]/,                                      // ../
+        /\b(javascript|vbscript|data)\s*:/i,               // javascript:alert(1)
+        /\bon\w+\s*=/i,                                    // onerror=
+        /\b(rm\s+-rf|sudo|chmod|wget|powershell|cmd\.exe|whoami)\b|\/etc\/passwd/i
+    ];
+
+    // Contraseñas: los símbolos sueltos son legítimos, así que solo se
+    // detectan ataques claros (etiquetas, SQL, comandos, rutas).
+    const PATRONES_CLAVE = [
+        /<\s*\/?\s*[a-z!][^>]*>?/i,
+        /\$\(|\$\{|\{\{/,
+        /['"]\s*(--|#|;|\bor\b|\band\b)/i,
+        /\b(or|and)\b\s+['"]?\d+['"]?\s*=\s*['"]?\d+/i,
+        /\b(union\s+select|drop\s+table|insert\s+into|delete\s+from|select\s+.+\s+from)\b/i,
+        /\.\.[\/\\]/,
+        /\b(javascript|vbscript)\s*:/i,
+        /\bon\w+\s*=/i,
+        /\b(rm\s+-rf|sudo|chmod|wget|powershell|cmd\.exe|whoami)\b|\/etc\/passwd/i
+    ];
+
+    function coincide(patrones, texto) {
+
+        return patrones.some(function (patron) {
+            return patron.test(texto);
+        });
+
+    }
+
+    // Contraseñas conocidas (también cuando el ojito las muestra como texto)
+    const idsContrasena = new Set();
+
+    document.querySelectorAll(".toggle-password").forEach(function (boton) {
+
+        const id = boton.getAttribute("data-target");
+
+        if (id) {
+            idsContrasena.add(id);
+        }
+
+    });
+
+    function esContrasena(campo) {
+
+        if ((campo.type || "").toLowerCase() === "password") {
+            return true;
+        }
+
+        if (idsContrasena.has(campo.id)) {
+            return true;
+        }
+
+        return /pass|contrase|clave|confirmar/i.test(campo.id || "");
+
+    }
+
+    const TIPOS_SIN_TEXTO = ["checkbox", "radio", "hidden", "file", "submit", "button", "range", "color", "reset", "image"];
+
+    let ultimoMal = 0;
+
+    document.addEventListener("input", function (evento) {
+
+        const campo = evento.target;
+
+        if (!campo || (campo.tagName !== "INPUT" && campo.tagName !== "TEXTAREA")) {
+            return;
+        }
+
+        if (TIPOS_SIN_TEXTO.indexOf((campo.type || "").toLowerCase()) !== -1) {
+            return;
+        }
+
+        const patrones = esContrasena(campo) ? PATRONES_CLAVE : PATRONES_TEXTO;
+        const sospechoso = !!campo.value && coincide(patrones, campo.value);
+        const eraSospechoso = campo.dataset.sospechoso === "1";
+
+        campo.dataset.sospechoso = sospechoso ? "1" : "0";
+
+        // solo suena al pasar de limpio a sospechoso (no en cada tecla)
+        if (!sospechoso || eraSospechoso) {
+            return;
+        }
+
+        const ahora = Date.now();
+
+        if (ahora - ultimoMal < ENFRIAMIENTO_MAL) {
+            return;
+        }
+
+        ultimoMal = ahora;
+
+        reproducir("mal");
+
+    }, true);
+
+})();
+
+
+// =============================
 // MENSAJE DE PRUEBA
 // =============================
 
