@@ -777,10 +777,9 @@ if (capaTransicion) {
    animado = false cuando hay transición → el color de acento, el logo
    y el anillo cambian al instante, para que no se vean cambiar */
 function ejecutarTransicion(cambio, idDestino) {
-    const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // sin capa, sin pestaña previa o con movimiento reducido: cambio directo
-    if (!capaTransicion || !paginaActual || reducir) {
+    // sin capa o sin pestaña previa: cambio directo
+    // (ya no se salta la transición por "reducir movimiento" del sistema)
+    if (!capaTransicion || !paginaActual) {
         cambio(true);
         return;
     }
