@@ -630,7 +630,7 @@ function actualizarCopyright() {
     };
 
     const año = new Date().getFullYear();
-    copyright.innerHTML = `&copy; ${año} T.S SOLUTIONS. ${textos[idiomaActual]}`;
+    copyright.innerHTML = `&copy; ${año} FOURBEST ${textos[idiomaActual]}`;
 }
 
 
